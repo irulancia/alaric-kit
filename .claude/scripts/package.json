@@ -1,0 +1,4 @@
+{
+  "//": "The kit scripts are CommonJS; this keeps them working in projects whose package.json sets \"type\": \"module\" (SvelteKit does).",
+  "type": "commonjs"
+}

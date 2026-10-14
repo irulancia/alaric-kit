@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard</title>
+<link rel="stylesheet" href=".claude/scripts/design-system-configurator.css" />
+<script src=".claude/scripts/design-system-icons.js"></script>
+<style>
+  /* Same --cfg-* tokens (colors, dark mode) as the configurator's own panel, so the two tools
+     this template ships with — configurator and dashboard — read as one family instead of two
+     unrelated pages. Layout-only values below (radius, mono stack) stay local: the configurator
+     doesn't export a generic "surface radius" or code-font token to reuse. */
+  :root {
+    --dash-radius: 10px;
+    --dash-mono: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    /* Subtle depth, not a new color: darkens the same --cfg-bg toward black rather than
+       introducing a literal hex value. Fixed so it reads against the viewport, not the (taller)
+       page content, and stays a gentle gradient instead of visible banding on a long page. */
+    background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mix(in srgb, var(--cfg-bg), black 14%) 100%) fixed;
+    color: var(--cfg-text);
+    font-family: var(--cfg-font);
+    line-height: 1.5;
+    padding: 40px 24px 64px;
+  }
+  /* Capped, unlike the configurator: that's a sidebar+canvas tool that legitimately wants the
+     full viewport for live editing, but this and the other two generated pages are content
+     lists/cards, which just look stretched and empty at 2000px+. The three pages share this
+     cap (and the --cfg-* colors above) so they read as one family; the configurator is allowed
+     to be a different shape because it does a different job. */
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  /* Same wordmark treatment as .navbar-brand in the design system itself (design.md): uppercase,
+     spaced out. CSS text-transform, not literal caps in the content, so it still works for
+     whatever PROJECT_NAME a downstream project's own CLAUDE.md gives it. */
+  h1 { font-size: 1.9rem; font-weight: 600; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.24em; }
+  .subtitle { color: var(--cfg-muted); font-size: 0.95rem; margin-bottom: 40px; }
+  .subtitle a { color: var(--cfg-text); text-underline-offset: 2px; }
+  .subtitle a:hover { text-decoration-thickness: 2px; }
+  h2 { font-size: 0.8rem; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cfg-muted); }
+  section { margin-bottom: 36px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  /* Icon swatch: a tint of the card's own color behind it, same idea as the design system's
+     --accent-bg (a low-alpha fill of the ring color), via color-mix since these are plain hex
+     custom properties, not the pre-split RGB channels the exported tokens use. */
+  .card-icon {
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 36px; height: 36px; border-radius: 9px;
+    background: color-mix(in srgb, var(--icon-color) 18%, transparent);
+    color: var(--icon-color);
+  }
+  .card-icon svg { width: 18px; height: 18px; fill: currentColor; }
+  /* The three generated/configured things this kit hands you -- Design System, Backlog, Git
+     History -- get one big statement row above the detailed lists (Rules, Available commands)
+     instead of reading as just another grid entry. Same swatch idea as .card-icon, just bigger. */
+  .hero-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 36px; }
+  .hero-card {
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--cfg-surface);
+    border: 1px solid var(--cfg-border);
+    border-radius: calc(var(--dash-radius) * 1.4);
+    padding: 24px;
+    text-decoration: none;
+    color: var(--cfg-text);
+    transition: border-color 0.15s ease;
+  }
+  .hero-card:hover { border-color: var(--icon-color); }
+  /* Each big card takes a faint tint of its own colour (the same one as its icon), so the four read apart. */
+  .hero-card:not(.missing) { background: color-mix(in srgb, var(--icon-color) 9%, var(--cfg-surface)); border-color: color-mix(in srgb, var(--icon-color) 28%, var(--cfg-border)); }
+  .hero-icon {
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 14px;
+    background: color-mix(in srgb, var(--icon-color) 18%, transparent);
+    color: var(--icon-color);
+  }
+  .hero-icon svg { width: 28px; height: 28px; fill: currentColor; }
+  .hero-card.missing { opacity: 0.6; }
+  .hero-title { font-size: 1.15rem; font-weight: 600; }
+  .hero-desc { font-size: 0.9rem; color: var(--cfg-muted); }
+  .command {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--cfg-surface);
+    border: 1px solid var(--cfg-border);
+    border-radius: var(--dash-radius);
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+  a.command:hover { border-color: var(--cfg-text); }
+  .command-head { display: flex; align-items: center; gap: 12px; }
+  .command .name { font-family: var(--dash-mono); font-size: 0.85rem; color: var(--cfg-text); font-weight: 600; }
+  .command .desc { font-size: 0.85rem; color: var(--cfg-muted); }
+  .rule .name { font-family: var(--cfg-font); font-size: 0.95rem; font-weight: 600; }
+  /* Commands: a list, not cards — a name to type and what it does, grouped by namespace, with Copy (a command is
+     something you paste into Claude Code). */
+  .cmd-group + .cmd-group { margin-top: 20px; }
+  .cmd-group h3 { margin: 0 0 8px; font-size: 0.75rem; font-weight: 600; color: var(--cfg-muted); font-family: var(--dash-mono); }
+  .cmd-list { list-style: none; margin: 0; padding: 0; background: var(--cfg-surface); border: 1px solid var(--cfg-border); border-radius: var(--dash-radius); }
+  .cmd-list li { display: grid; grid-template-columns: 28px minmax(12rem, 16rem) minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 14px; }
+  .cmd-list li + li { border-top: 1px solid var(--cfg-border); }
+  .cmd-list .card-icon { width: 28px; height: 28px; border-radius: 7px; }
+  .cmd-list .card-icon svg { width: 16px; height: 16px; }
+  .cmd-name { font-family: var(--dash-mono); font-size: 0.85rem; font-weight: 600; color: var(--cfg-text); }
+  .cmd-desc { font-size: 0.85rem; color: var(--cfg-muted); }
+  .cmd-copy { padding: 4px 10px; border: 1px solid var(--cfg-border); border-radius: 999px; background: none; font: inherit; font-size: 0.75rem; color: var(--cfg-muted); cursor: pointer; }
+  .cmd-copy:hover { color: var(--cfg-text); border-color: var(--cfg-text); }
+  .cmd-copy:focus-visible { outline: 2px solid var(--cfg-text); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .cmd-list li { grid-template-columns: 28px minmax(0, 1fr) auto; }
+    .cmd-list .cmd-desc { grid-column: 2 / -1; }
+  }
+  .empty-note { font-size: 0.8rem; color: var(--cfg-muted); font-style: italic; }
+  /* "Start here": the same surface as the hero cards, one numbered row per step. A done step shows
+     the check in --cat-content (the green of the set) and fades, so the next one reads first. */
+  .start {
+    background: var(--cfg-surface); border: 1px solid var(--cfg-border);
+    border-radius: calc(var(--dash-radius) * 1.4); padding: 24px; margin-bottom: 36px;
+  }
+  .start h2 { margin-bottom: 4px; }
+  .start-note { font-size: 0.8rem; color: var(--cfg-muted); margin: 0 0 16px; }
+  .start ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .start li { display: flex; gap: 12px; align-items: flex-start; }
+  .start-mark {
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--cfg-border); font-size: 0.8rem; font-weight: 600;
+  }
+  .start-mark svg { width: 28px; height: 28px; fill: currentColor; }
+  .start li.done .start-mark { border: 0; color: var(--cat-content); }
+  .start li.done .start-title { color: var(--cfg-muted); }
+  .start-title { font-weight: 600; }
+  .start-todo { font-size: 0.85rem; color: var(--cfg-muted); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="project-name"></h1>
+  <div class="subtitle" id="subtitle"></div>
+
+  <section class="start" id="start" hidden>
+    <h2>Start here</h2>
+    <p class="start-note">Checked against the project when this page was made — /project:dashboard refreshes it. It goes away once every step is done.</p>
+    <ol id="start-steps"></ol>
+  </section>
+
+  <div class="hero-row" id="hero"></div>
+
+  <section>
+    <h2>Rules</h2>
+    <div class="grid" id="rules"></div>
+  </section>
+
+  <section>
+    <h2>Available commands</h2>
+    <div id="commands"></div>
+  </section>
+</div>
+<script>
+const PROJECT_NAME = /*__PROJECT_NAME__*/;
+const KIT = /*__KIT__*/;
+const HERO = /*__HERO_JSON__*/;
+const COMMANDS = /*__COMMANDS_JSON__*/;
+const RULES = /*__RULES_JSON__*/;
+const START = /*__START_JSON__*/;
+
+// Same 5 hues as the --cat-* badges, cycled by position so a row of cards reads as colorful
+// without hand-picking a color per item.
+const CARD_COLORS = ['var(--cat-frontend)', 'var(--cat-logic)', 'var(--cat-content)', 'var(--cat-backend)', 'var(--cat-tooling)'];
+const cardColor = (i) => CARD_COLORS[i % CARD_COLORS.length];
+const iconMarkup = (name) => `<svg data-icon="${name}" viewBox="0 0 256 256" aria-hidden="true"></svg>`;
+
+// Same hydration trick as design-system-demo.js: icons are placeholders with a data-icon
+// attribute, filled in from window.DS_ICONS (design-system-icons.js) once they're in the DOM.
+// Duplicated here (a handful of lines) rather than loading the whole demo builder for it.
+function svgNodes(markup) {
+  return Array.from(new DOMParser()
+    .parseFromString(`<svg xmlns="http://www.w3.org/2000/svg">${markup}</svg>`, 'image/svg+xml')
+    .documentElement.childNodes).map((n) => document.importNode(n, true));
+}
+function hydrateIcons(root) {
+  root.querySelectorAll('svg[data-icon]').forEach((el) => {
+    const set = (window.DS_ICONS || {})[el.dataset.icon];
+    el.replaceChildren(...(set ? svgNodes(set.duotone) : []));
+  });
+}
+
+// "{Project} Dashboard", like "{Project} Backlog"; under it, where the kit comes from (in Alaric itself: what it is).
+document.getElementById('project-name').textContent = `${PROJECT_NAME} Dashboard`;
+document.title = `${PROJECT_NAME} Dashboard`;
+(() => {
+  const sub = document.getElementById('subtitle');
+  const link = document.createElement('a');
+  link.href = KIT.url;
+  link.textContent = 'Alaric starter kit';
+  sub.append(KIT.isKit ? 'The ' : 'Built from the ', link, ' for Claude Code');
+})();
+
+// Built with textContent: a step's text names markup ("<body>") that must show as written.
+function renderStart() {
+  if (!START.length) return;
+  const make = (tag, className, text) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text) el.textContent = text;
+    return el;
+  };
+  const items = START.map((s, i) => {
+    const li = make('li', s.done ? 'done' : '');
+    const mark = make('span', 'start-mark', s.done ? '' : String(i + 1));
+    if (s.done) mark.innerHTML = iconMarkup(s.icon);   // a fixed icon name from the generator, not user text
+    const body = make('div');
+    body.append(make('div', 'start-title', s.done ? `${s.title} — done` : s.title));
+    if (!s.done) body.append(make('div', 'start-todo', s.todo));
+    li.append(mark, body);
+    return li;
+  });
+  document.getElementById('start-steps').replaceChildren(...items);
+  document.getElementById('start').hidden = false;
+}
+renderStart();
+
+document.getElementById('hero').innerHTML = HERO.map((h) => {
+  const icon = `<span class="hero-icon" style="--icon-color:${h.color}">${iconMarkup(h.icon)}</span>`;
+  if (!h.exists) {
+    return `<div class="hero-card missing" style="--icon-color:${h.color}">${icon}<div class="hero-title">${h.title} — not generated yet</div><div class="hero-desc">Run ${h.regen}</div></div>`;
+  }
+  return `<a class="hero-card" href="${h.href}" style="--icon-color:${h.color}">${icon}<div class="hero-title">${h.title}</div><div class="hero-desc">${h.desc}</div></a>`;
+}).join('');
+
+// Grouped by namespace: project first (the day-to-day ones), with bootstrap — where a project starts — at its top.
+const FIRST = { group: 'project', command: 'project:bootstrap' };
+function renderCommands() {
+  if (!COMMANDS.length) return '<div class="empty-note">No commands found in .claude/commands/</div>';
+  COMMANDS.sort((a, b) => (b.name === FIRST.command) - (a.name === FIRST.command));
+  const groups = [...new Set(COMMANDS.map((c) => c.name.split(':')[0]))].sort((a, b) => (b === FIRST.group) - (a === FIRST.group));
+  let i = 0;
+  return groups.map((g) => `<div class="cmd-group"><h3>${g}</h3><ul class="cmd-list">${COMMANDS.filter((c) => c.name.split(':')[0] === g).map((c) => `<li>
+      <span class="card-icon" style="--icon-color:${cardColor(i++)}">${iconMarkup(c.icon)}</span><code class="cmd-name">/${c.name}</code>
+      <span class="cmd-desc">${c.description}</span><button type="button" class="cmd-copy" data-copy="/${c.name}" aria-label="Copy /${c.name}">Copy</button></li>`).join('')}</ul></div>`).join('');
+}
+document.getElementById('commands').innerHTML = renderCommands(); // trusted-static: names and descriptions from the kit's own command files
+document.getElementById('commands').addEventListener('click', async (e) => {
+  const b = e.target.closest('.cmd-copy');
+  if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; } catch (err) { b.textContent = 'Copy failed'; }
+  setTimeout(() => { b.textContent = 'Copy'; }, 1500);
+});
+
+document.getElementById('rules').innerHTML = RULES.length
+  ? RULES.map((r, i) => `<a class="command rule" href="${r.file}"><div class="command-head"><span class="card-icon" style="--icon-color:${cardColor(i)}">${iconMarkup(r.icon)}</span><div class="name">${r.label}</div></div>${r.description ? `<div class="desc">${r.description}</div>` : ''}</a>`).join('')
+  : '<div class="empty-note">No rules found in .claude/rules/</div>';
+
+hydrateIcons(document.body);
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx svelte-check *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git stash *)",
+      "Bash(gh *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)",
+      "Read",
+      "Write(src/**/*)",
+      "Write(static/**/*)",
+      "Write(tests/**/*)",
+      "Write(CLAUDE.md)",
+      "Write(CLAUDE.local.md)",
+      "Write(.claude/**/*)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(* --no-verify*)",
+      "Bash(* --no-gpg-sign*)",
+      "Write(.env*)",
+      "Write(node_modules/**/*)",
+      "Write(package-lock.json)",
+      "Write(pnpm-lock.yaml)",
+      "Write(yarn.lock)",
+      "Write(bun.lockb)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git push:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-check.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-critical-files.sh\"",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-design-tokens.sh\"",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-html-sanitization.sh\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-commit-tags.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/svelte-check.sh\"",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-components-js.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-code-quality.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/rule-reminder.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
