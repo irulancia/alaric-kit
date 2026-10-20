@@ -2,6 +2,8 @@
 
 A starter kit for [Claude Code](https://claude.com/claude-code): rules Claude actually follows (several enforced automatically, not just written down), a design system configurator, and a backlog — all wired into one dashboard.
 
+Alaric is part of [AMBIE Garden](https://ambiegarden.com), free tools for designers.
+
 ## Starting a new project
 
 1. **Copy this kit folder** and rename the copy to your project's name.
@@ -86,3 +88,7 @@ Every new file follows the same naming convention:
 ## What's generic vs. project-specific
 
 Everything under `.claude/` is the reusable kit. `CLAUDE.md`, `memory/`, and the pages generated from them or from the project's history (`backlog.html`, `dashboard.html`, `history.html`), belong to each project — a new project gets its own from `/project:bootstrap`.
+
+## License
+
+MIT (`LICENSE`): use, change and share the kit freely, in personal or commercial projects; keep its copyright notice with it. The icons are Phosphor Icons, also MIT. When you start a project, `/project:bootstrap` moves `LICENSE` into `.claude/`, next to the kit's files it covers, so your project's root is free for a license of its own.

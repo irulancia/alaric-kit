@@ -47,6 +47,7 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
    ```
 5. Set up what the kit's commands, pages and hooks depend on. Create only what's missing, never overwrite (bootstrap may run on a project that already has some of it):
    - **git:** `git init` if there's no `.git`. No commit — commits need the user's go-ahead and the category tags (`commits.md`). `/project:history`, `/project:commit` and `check-commit-tags.sh` need a repo.
+   - **the kit's license:** a `LICENSE` at the root that starts with `MIT License` and names Irina Sima is the kit's, not the project's. Move it to `.claude/LICENSE` (it covers the kit's files, and its notice has to stay with them); the root is left for the project's own license, if it wants one. Don't ask, and say it in the summary.
    - **git identity:** check `git config user.name` and `git config user.email` (they may be set only per repo, not globally). If either is empty, ask the user for it and set it for this repo only (`git config user.name "…"`); otherwise the first commit fails with "Author identity unknown".
    - **`memory/backlog.md`** — the source `/project:backlog` reads (it fails without it):
      ```
