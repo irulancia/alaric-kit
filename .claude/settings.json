@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-check.sh\"",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-session.sh\"",
             "timeout": 5
           }
         ]
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-critical-files.sh\"",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-protected-files.sh\"",
             "timeout": 5
           },
           {
@@ -84,6 +84,11 @@
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-commit-tags.sh\"",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-push.sh\"",
+            "timeout": 5
           }
         ]
       }
@@ -94,12 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/svelte-check.sh\"",
-            "timeout": 30
-          },
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-components-js.sh\"",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-components.sh\"",
             "timeout": 10
           }
         ]
@@ -112,6 +112,11 @@
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-code-quality.sh\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-types.sh\"",
+            "timeout": 90
           }
         ]
       }
@@ -121,7 +126,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/rule-reminder.sh\"",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/remind-rules.sh\"",
             "timeout": 5
           }
         ]

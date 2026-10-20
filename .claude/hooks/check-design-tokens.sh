@@ -35,8 +35,8 @@ fi
 
 # Exempt the configurator's own chrome stylesheet: it defines the --cfg-* tokens for the
 # tool's UI (panel, controls), separate from the --* design-system tokens it generates.
-# Matched on basename only: Windows callers report the path with backslashes.
-if echo "$FILE_PATH" | grep -qE 'design-system-configurator\.css$'; then
+# Either separator: Windows callers report the path with backslashes.
+if echo "$FILE_PATH" | grep -qE 'configurator[/\\]configurator\.css$'; then
   exit 0
 fi
 

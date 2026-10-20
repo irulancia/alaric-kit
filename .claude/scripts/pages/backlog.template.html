@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Backlog</title>
+<link rel="stylesheet" href=".claude/scripts/configurator/configurator.css" />
+<style>
+  /* --cfg-* and --cat-* tokens (colors, dark mode) come from configurator/configurator.css,
+     shared with the configurator, the dashboard and history.html, so all four read as one
+     family instead of four hand-copied palettes drifting apart. */
+  :root {
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    /* Subtle depth, not a new color: darkens the same --cfg-bg toward black rather than
+       introducing a literal hex value. Fixed so it reads against the viewport, not the (taller)
+       page content. */
+    background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mix(in srgb, var(--cfg-bg), black 14%) 100%) fixed;
+    color: var(--cfg-text);
+    font-family: var(--cfg-font);
+    line-height: 1.5;
+    padding: 40px 24px 64px;
+  }
+  /* Capped, unlike the configurator: that's a sidebar+canvas tool that legitimately wants the
+     full viewport for live editing, but this and the other two generated pages are content
+     lists/cards, which just look stretched and empty at 2000px+. The three pages share this
+     cap (and the --cfg-* colors above) so they read as one family; the configurator is allowed
+     to be a different shape because it does a different job. */
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--cfg-muted); text-decoration: none; margin-bottom: 16px; }
+  .back-link:hover { color: var(--cfg-text); }
+  /* Same wordmark treatment as the configurator's "ALARIC DS" title (design.md): brand name +
+     page name, uppercase, spaced out. CSS text-transform, not literal caps, so it still works
+     for whatever PROJECT_NAME a downstream project's own CLAUDE.md gives it. */
+  h1 { font-size: 1.9rem; font-weight: 600; margin: 0 0 24px; text-transform: uppercase; letter-spacing: 0.24em; }
+  h2 { font-size: 1rem; margin: 24px 0 8px; color: var(--cfg-muted); }
+  /* The four filter groups sit two per row — Status + Size, Type + Area (owner, 2026-10-05) — and wrap on a narrow window. */
+  .filter-rows { display: grid; gap: 10px; margin-bottom: 20px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 10px 40px; }
+  .summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .filter-label { width: 56px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cfg-muted); }
+  .summary-pill {
+    background: var(--cfg-surface);
+    border: 1px solid var(--cfg-border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    color: var(--cfg-muted);
+    cursor: pointer;
+    user-select: none;
+  }
+  .summary-pill strong { color: var(--cfg-text); }
+  .summary-pill.active { background: var(--cfg-text); border-color: var(--cfg-text); color: var(--cfg-bg); }
+  .summary-pill.active strong { color: inherit; }
+  .controls { margin-bottom: 8px; }
+  .controls input {
+    width: 100%;
+    background: var(--cfg-surface);
+    border: 1px solid var(--cfg-border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: var(--cfg-text);
+    font-family: var(--cfg-font);
+  }
+  .count { font-size: 0.85rem; color: var(--cfg-muted); margin-bottom: 4px; }
+  .item {
+    background: var(--cfg-surface);
+    border: 1px solid var(--cfg-border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .item.done { opacity: 0.55; }
+  .item.done .item-text { text-decoration: line-through; }
+  /* Paused = a personal "not now" kept only in this browser: faded, not struck through (not finished). */
+  .item.paused { opacity: 0.55; }
+  .item-side { flex-shrink: 0; }
+  .pause-btn, .link-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 0.75rem; color: var(--cfg-muted); cursor: pointer; text-decoration: underline; }
+  .pause-btn:hover, .link-btn:hover { color: var(--cfg-text); }
+  .paused-note { font-size: 0.75rem; color: var(--cfg-muted); margin-bottom: 8px; }
+  .check {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--cfg-border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .check.done { background: var(--cfg-text); border-color: var(--cfg-text); }
+  .item-body { flex: 1; }
+  .item-text { font-size: 0.9rem; }
+  .badges { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 999px; color: var(--cfg-bg); font-weight: 600; } /* dark text: the category colours are light on the dark pages */
+  .badge-frontend { background: var(--cat-frontend); }
+  .badge-logic { background: var(--cat-logic); }
+  .badge-content { background: var(--cat-content); }
+  .badge-backend { background: var(--cat-backend); }
+  .badge-tooling { background: var(--cat-tooling); }
+  /* Size is not a category: neutral outline, so it never competes with the colored area badges. */
+  .badge-size { color: var(--cfg-text); border: 1px solid var(--cfg-border); background: transparent; }
+  /* Type = what kind of work: a colored dot + its word (the filled pills are the areas). */
+  .badge-type { display: inline-flex; align-items: center; color: var(--cfg-text); border: 1px solid var(--cfg-border); background: transparent; }
+  .type-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); margin-right: 6px; flex-shrink: 0; }
+  .empty { color: var(--cfg-muted); padding: 24px 0; text-align: center; }
+  .empty p { margin: 0 0 6px; }
+  .empty a { color: inherit; text-decoration: underline; }
+  .empty a:hover { color: var(--cfg-text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="dashboard.html">&larr; Dashboard</a>
+  <h1 id="page-title">Backlog</h1>
+  <div class="filter-rows">
+    <div class="filter-row"><div class="summary" id="status-filter"></div><div class="summary" id="size-filter"></div></div>
+    <div class="filter-row"><div class="summary" id="type-filter"></div><div class="summary" id="summary"></div></div>
+  </div>
+  <div class="controls">
+    <input id="q" type="text" placeholder="search..." />
+  </div>
+  <div class="count" id="count"></div>
+  <div class="paused-note" id="paused-note" hidden></div>
+  <div id="list"></div>
+</div>
+<script>
+const PROJECT_NAME = /*__PROJECT_NAME__*/;
+const ITEMS = /*__ITEMS_JSON__*/;
+document.getElementById('page-title').textContent = `${PROJECT_NAME} Backlog`;
+const CATEGORIES = ['frontend', 'logic', 'content', 'backend', 'tooling'];
+const STATUSES = [['open', 'open'], ['done', 'done'], ['all', 'all']];
+const statusOf = (it) => (it.done ? 'done' : 'open');
+
+// Pause: a personal "not now" to walk the list more easily. It lives ONLY in this browser (localStorage),
+// is never written to backlog.md and Claude never sees it; it survives regenerating the page as long as
+// the item's text is unchanged. Storage can be missing (private window): then nothing is remembered.
+const PAUSE_KEY = `kit-backlog-paused:${PROJECT_NAME}`;
+const itemKey = (it) => `${it.section}␟${it.text}`;
+function loadPaused() {
+  try { return new Set(JSON.parse(localStorage.getItem(PAUSE_KEY) || '[]')); } catch (e) { return new Set(); }
+}
+function savePaused() {
+  try { localStorage.setItem(PAUSE_KEY, JSON.stringify([...paused])); } catch (e) { /* not remembered: the page still works */ }
+}
+const paused = loadPaused();
+function togglePause(key) {
+  if (paused.has(key)) paused.delete(key);
+  else paused.add(key);
+  savePaused();
+  render();
+}
+function renderPausedNote() {
+  const live = new Set(ITEMS.map(itemKey));
+  const n = [...paused].filter((k) => live.has(k)).length;
+  const note = document.getElementById('paused-note');
+  note.hidden = n === 0;
+  note.textContent = `${n} paused — only in this browser, Claude doesn't see it. `;
+  const all = document.createElement('button');
+  all.type = 'button';
+  all.className = 'link-btn';
+  all.textContent = 'Resume all';
+  all.addEventListener('click', () => { paused.clear(); savePaused(); render(); });
+  note.append(all);
+}
+const SIZES = [['S', 'small'], ['M', 'medium'], ['L', 'large']];
+const TYPES = [['bug', 'bug'], ['check', 'to check'], ['decision', 'decision'], ['idea', 'idea'], ['internal', 'internal']];
+const typeDot = (key) => `<span class="type-dot" style="--dot: var(--type-${key})"></span>`;
+
+// Open is the default view: the backlog is read to see what is left.
+const state = { q: '', status: 'open', sizes: new Set(), types: new Set(), categories: new Set() };
+
+function statusMatches(it, status) {
+  if (status !== 'all') return statusOf(it) === status;
+  return true;
+}
+
+function countBy(keyOf, keys) {
+  const counts = {};
+  keys.forEach((k) => { counts[k] = 0; });
+  ITEMS.filter((it) => statusMatches(it, state.status)).forEach((it) => {
+    keyOf(it).forEach((k) => { if (k in counts) counts[k] += 1; });
+  });
+  return counts;
+}
+
+function pillsHtml(label, entries, isActive, dotOf = () => '') {
+  const pills = entries.map(([key, name, count]) => {
+    const active = isActive(key) ? 'active' : '';
+    return `<div class="summary-pill ${active}" data-key="${key}">${dotOf(key)}<strong>${count}</strong> ${name}</div>`;
+  }).join('');
+  return `<span class="filter-label">${label}</span>${pills}`;
+}
+
+function bindPills(el, onPick) {
+  el.querySelectorAll('.summary-pill').forEach((pill) => {
+    pill.addEventListener('click', () => { onPick(pill.dataset.key); render(); });
+  });
+}
+
+function toggle(set, key) {
+  if (set.has(key)) set.delete(key);
+  else set.add(key);
+}
+
+function renderFilters() {
+  const statusEl = document.getElementById('status-filter');
+  const statusEntries = STATUSES.map(([k, name]) => [k, name, ITEMS.filter((it) => statusMatches(it, k)).length]);
+  statusEl.innerHTML = pillsHtml('Status', statusEntries, (k) => state.status === k);
+  bindPills(statusEl, (k) => { state.status = k; });
+
+  const sizeEl = document.getElementById('size-filter');
+  const sizeCounts = countBy((it) => (it.size ? [it.size] : []), SIZES.map(([k]) => k));
+  sizeEl.innerHTML = pillsHtml('Size', SIZES.map(([k, name]) => [k, name, sizeCounts[k]]), (k) => state.sizes.has(k));
+  bindPills(sizeEl, (k) => toggle(state.sizes, k));
+
+  const typeEl = document.getElementById('type-filter');
+  const typeCounts = countBy((it) => (it.type ? [it.type] : []), TYPES.map(([k]) => k));
+  typeEl.innerHTML = pillsHtml('Type', TYPES.map(([k, name]) => [k, name, typeCounts[k]]), (k) => state.types.has(k), typeDot);
+  bindPills(typeEl, (k) => toggle(state.types, k));
+
+  const catEl = document.getElementById('summary');
+  const catCounts = countBy((it) => it.categories, CATEGORIES);
+  catEl.innerHTML = pillsHtml('Area', CATEGORIES.map((c) => [c, c, catCounts[c]]), (c) => state.categories.has(c));
+  bindPills(catEl, (c) => toggle(state.categories, c));
+}
+
+function matches(it) {
+  if (!statusMatches(it, state.status)) return false;
+  if (state.sizes.size > 0 && !state.sizes.has(it.size)) return false;
+  if (state.types.size > 0 && !state.types.has(it.type)) return false;
+  if (state.q) {
+    const hay = (it.text + ' ' + it.section).toLowerCase();
+    if (!hay.includes(state.q.toLowerCase())) return false;
+  }
+  if (state.categories.size > 0 && !it.categories.some((c) => state.categories.has(c))) return false;
+  return true;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+// A fresh project has no items yet: "No task matches." would read as if the filters had hidden them.
+function renderEmptyBacklog(list) {
+  const box = document.createElement('div');
+  box.className = 'empty';
+  const lead = document.createElement('p');
+  lead.textContent = 'The backlog is empty — nothing written down yet.';
+  const how = document.createElement('p');
+  const inbox = document.createElement('a');
+  inbox.href = '.claude/scripts/pages/inbox.html';
+  inbox.textContent = 'Inbox';
+  const example = document.createElement('code');
+  example.textContent = '- [ ] [frontend] {S} {idea} what to do';
+  how.append('Write a note in the ', inbox, ' and Claude adds it here, or add a line to memory/backlog.md yourself: ', example, '.');
+  box.append(lead, how);
+  list.replaceChildren(box);
+}
+
+function render() {
+  renderFilters();
+  renderPausedNote();
+  const filtered = ITEMS.filter(matches);
+  document.getElementById('count').textContent = `${filtered.length} of ${ITEMS.length} tasks`;
+  const list = document.getElementById('list');
+  if (ITEMS.length === 0) { renderEmptyBacklog(list); return; }
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">No task matches.</div>';
+    return;
+  }
+  let currentSection = null;
+  let html = '';
+  filtered.forEach((it) => {
+    if (it.section !== currentSection) {
+      html += `<h2>${escapeHtml(it.section || '')}</h2>`;
+      currentSection = it.section;
+    }
+    const sizeName = (SIZES.find(([k]) => k === it.size) || [])[1];
+    const sizeBadge = sizeName ? `<span class="badge badge-size">${sizeName}</span>` : '';
+    const key = itemKey(it), isPaused = !it.done && paused.has(key);
+    const typeName = (TYPES.find(([k]) => k === it.type) || [])[1];
+    const typeBadge = typeName ? `<span class="badge badge-type">${typeDot(it.type)}${typeName}</span>` : '';
+    const badges = typeBadge + sizeBadge + it.categories.map((c) => `<span class="badge badge-${c}">${c}</span>`).join('');
+    html += `
+      <div class="item ${it.done ? 'done' : ''}${isPaused ? ' paused' : ''}">
+        <div class="check ${it.done ? 'done' : ''}"></div>
+        <div class="item-body">
+          <div class="item-text">${escapeHtml(it.text)}</div>
+          <div class="badges">${badges}</div>
+        </div>
+        ${it.done ? '' : `<div class="item-side"><button type="button" class="pause-btn" data-key="${escapeHtml(key)}">${isPaused ? 'Resume' : 'Pause'}</button></div>`}
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+  list.querySelectorAll('.pause-btn').forEach((b) => b.addEventListener('click', () => togglePause(b.dataset.key)));
+}
+
+document.getElementById('q').addEventListener('input', (e) => { state.q = e.target.value; render(); });
+
+render();
+</script>
+</body>
+</html>

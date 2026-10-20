@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ALARIC DS</title>
+<link rel="stylesheet" href="styles/components.css" />
+<link rel="stylesheet" href="styles/layouts.css" />
+<link rel="stylesheet" href="configurator.css" />
+<link id="font-link" rel="stylesheet" href="" />
+</head>
+<body>
+<div class="cfg">
+<aside class="cfg-panel" id="cfg-panel">
+    <div class="cfg-head">
+      <div class="cfg-head-row"><a class="cfg-back" href="../../../dashboard.html">&larr; Dashboard</a><button type="button" class="cfg-panel-toggle" id="panel-hide" aria-controls="cfg-panel" aria-expanded="true">Hide panel &lsaquo;</button></div>
+      <div class="cfg-title">ALARIC DS</div>
+      <div class="cfg-subtitle">Choose, preview live, save app.css.</div>
+    </div>
+
+    <div class="cfg-scroll">
+      <section class="cfg-section">
+        <h2 class="cfg-section-title cfg-title-row"><span>Color</span><span id="color-notes"></span></h2>
+        <div class="cfg-pair">
+          <div class="cfg-field"><label class="cfg-label" for="primary">Primary</label><div class="cfg-color"><input type="color" id="primary" value="#ec5106" /><code id="primary-hex">#ec5106</code></div></div>
+          <div class="cfg-field"><label class="cfg-label" for="secondary">Secondary</label><div class="cfg-color"><input type="color" id="secondary" value="#e7e1d3" /><code id="secondary-hex">#e7e1d3</code></div></div>
+        </div>
+        <div class="cfg-field">
+          <div class="cfg-label"><label for="background">Page background</label><span class="cfg-tip "><button type="button" class="cfg-tip-btn" aria-label="About the page background" aria-describedby="tip-bg"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-bg">Auto: a near-white with a touch of Secondary, recalculated when Secondary changes. Untick it to pick your own colour. Either way, surfaces, borders and grey text follow the page, just as faint.</span></span></div>
+          <div class="cfg-pair cfg-pair-center"><div class="cfg-color"><input type="color" id="background" value="#faf7f1" /><code id="background-hex">#faf7f1</code><svg class="cfg-icon cfg-lock" data-icon="lock" viewBox="0 0 256 256" aria-hidden="true"></svg></div><label class="cfg-check cfg-auto"><input type="checkbox" id="auto-bg" checked /><span>Auto</span></label></div>
+        </div>
+        <div class="cfg-field">
+          <div class="cfg-label"><span>Button text contrast</span><span class="cfg-tip "><button type="button" class="cfg-tip-btn" aria-label="About the contrast rule" aria-describedby="tip-contrast"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-contrast">APCA (the default) reads closer to what the eye sees on mid-tones (orange, mid blue), but it is a draft and can fall below 4.5:1. WCAG 2 AA (4.5:1) is the legal standard: choose it when compliance is required.</span></span></div>
+          <div class="cfg-group" id="contrast-presets"><button type="button" class="cfg-btn" data-preset="apca" aria-pressed="false">APCA</button><button type="button" class="cfg-btn" data-preset="wcag" aria-pressed="false">WCAG 2 AA</button></div>
+        </div>
+      </section>
+
+      <section class="cfg-section">
+        <h2 class="cfg-section-title">Typography</h2>
+        <div class="cfg-pair">
+          <div class="cfg-field"><label class="cfg-label" for="font-display">Headings</label><select id="font-display"></select></div>
+          <div class="cfg-field"><label class="cfg-label" for="font-body">Body</label><select id="font-body"></select></div>
+        </div>
+      </section>
+
+      <section class="cfg-section">
+        <h2 class="cfg-section-title">Shape</h2>
+        <div class="cfg-field">
+          <div class="cfg-label"><label for="radius">Corner radius</label><span class="cfg-label-end"><span class="cfg-value" id="radius-value">28px</span><span class="cfg-tip "><button type="button" class="cfg-tip-btn" aria-label="About the corner radius" aria-describedby="tip-radius"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-radius"><span>The slider sets buttons and controls. Other elements stop at their own ceiling, so cards never get as round as a pill button; rows inside menus and the sidebar follow their container.</span><span>Right now: <span id="radius-readout"></span></span></span></span></span></div>
+          <input type="range" id="radius" min="0" max="28" step="1" value="28" />
+        </div>
+        <div class="cfg-field">
+          <span class="cfg-label">Shadow</span>
+          <div class="cfg-group" id="shadow-presets"><button type="button" class="cfg-btn" data-preset="flat" aria-pressed="false">Flat</button><button type="button" class="cfg-btn" data-preset="soft" aria-pressed="false">Soft</button><button type="button" class="cfg-btn" data-preset="layered" aria-pressed="false">Layered</button></div>
+        </div>
+      </section>
+
+      <section class="cfg-section">
+        <h2 class="cfg-section-title">Layout</h2>
+        <div class="cfg-field">
+          <div class="cfg-label"><span>Density</span><span class="cfg-tip "><button type="button" class="cfg-tip-btn" aria-label="About density" aria-describedby="tip-density"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-density">One control: spacing, type and control heights change together, so tight spacing never pairs with huge headings.</span></span></div>
+          <div class="cfg-group" id="density-presets"><button type="button" class="cfg-btn" data-preset="compact" aria-pressed="false">Compact</button><button type="button" class="cfg-btn" data-preset="normal" aria-pressed="false">Normal</button><button type="button" class="cfg-btn" data-preset="spacious" aria-pressed="false">Spacious</button></div>
+        </div>
+      </section>
+
+      <section class="cfg-section">
+        <h2 class="cfg-section-title">Icons</h2>
+        <div class="cfg-field">
+          <div class="cfg-label"><span>Style</span><span class="cfg-tip is-up"><button type="button" class="cfg-tip-btn" aria-label="About the icon style" aria-describedby="tip-icons"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-icons">The same geometry in all three (Phosphor Icons, MIT). Size follows density: 16 / 20 / 24px on Normal.</span></span></div>
+          <div class="cfg-group" id="icon-presets"><button type="button" class="cfg-btn" data-preset="outline" aria-pressed="false">Outline</button><button type="button" class="cfg-btn" data-preset="filled" aria-pressed="false">Filled</button><button type="button" class="cfg-btn" data-preset="duotone" aria-pressed="false">Duotone</button></div>
+          <div class="cfg-check-row" id="controls-option" hidden><label class="cfg-check"><input type="checkbox" id="style-controls" /><span>Affect buttons and pills</span></label><span class="cfg-tip is-up"><button type="button" class="cfg-tip-btn" aria-label="About buttons and pills" aria-describedby="tip-controls"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-controls">Outline: buttons and pills become 2px outlines in their own colour. Duotone: the same outline plus a tinted fill. Filled keeps solid buttons.</span></span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="cfg-foot">
+      <button class="cfg-copy" id="save-btn">Save src/app.css</button>
+      <div class="cfg-title-row cfg-foot-row"><button class="cfg-secondary" id="copy-btn">Copy tokens only</button><span class="cfg-tip is-up"><button type="button" class="cfg-tip-btn" aria-label="About what gets saved" aria-describedby="tip-save"><svg class="cfg-icon" data-icon="info" viewBox="0 0 256 256" aria-hidden="true"></svg></button><span class="cfg-tip-bubble" role="tooltip" id="tip-save">One file for src/app.css: the font import, the :root tokens and every component style. Chrome and Edge open a save dialog and write the file; other browsers download it. “Copy tokens only” puts just the :root block on the clipboard.</span></span></div>
+      <div class="cfg-status" id="export-status" role="status" aria-live="polite"></div>
+      <div class="cfg-reset-row"><button type="button" class="cfg-link-btn" id="reset-btn">Reset to defaults</button><span class="cfg-reset-status" id="reset-status" role="status" aria-live="polite"></span></div>
+    </div>
+  </aside>
+
+  <main class="cfg-stage">
+    <div class="cfg-toolbar">
+      <button type="button" class="cfg-panel-toggle cfg-panel-show" id="panel-show" aria-controls="cfg-panel" aria-expanded="false" hidden>&rsaquo; Show panel</button>
+      <div class="cfg-tabs" role="tablist" aria-label="Preview">
+        <button type="button" class="cfg-tab" role="tab" data-view="page" aria-selected="true">Example site</button>
+        <button type="button" class="cfg-tab" role="tab" data-view="components" aria-selected="false">Components</button>
+      </div>
+      <nav class="cfg-jump" id="jump" aria-label="Component groups" hidden></nav>
+    </div>
+    <div id="preview" class="ds-root" data-view="page"></div>
+  </main>
+</div>
+
+<script src="icons.js"></script>
+<script src="demo/components-tab.js"></script>
+<script src="demo/pages-work.js"></script>
+<script src="demo/pages-account.js"></script>
+<script src="demo/home.js"></script>
+<script src="demo/data.js"></script>
+<script src="demo/app.js"></script>
+<script src="demo/actions.js"></script>
+<script src="demo/forms.js"></script>
+<script src="color.js"></script>
+<script src="tokens.js"></script>
+<script src="components.generated.js"></script>
+<script src="export.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

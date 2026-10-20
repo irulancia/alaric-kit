@@ -3,6 +3,19 @@
 # for console.log, TypeScript `any`, and hardcoded secrets. Blocks (decision:block)
 # if anything is found, so Claude has to fix it before finishing.
 
+INPUT=$(cat)
+
+# Stop hooks run again after Claude continues: block once, then let it stop. A console.log it can't or mustn't
+# remove (one the owner left in a file she is working on) would otherwise keep the session in a loop.
+ACTIVE=$(echo "$INPUT" | node -e "
+  let d='';
+  process.stdin.on('data', c => d+=c);
+  process.stdin.on('end', () => {
+    try { console.log(JSON.parse(d).stop_hook_active ? 'yes' : 'no'); } catch(e) { console.log('no'); }
+  });
+" 2>/dev/null)
+[ "$ACTIVE" = "yes" ] && exit 0
+
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
 FILES=$(git status --porcelain 2>/dev/null | awk '{print $2}' | grep -E '\.(svelte|ts)$')

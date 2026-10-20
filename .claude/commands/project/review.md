@@ -9,11 +9,11 @@ Run a full code review on recent changes against project rules.
 ## Steps
 1. Run `git diff HEAD` to see all uncommitted changes
 2. Check against rules:
-   - `rules/common/coding-style.md` — style, immutability, file size
-   - `rules/common/design.md` — design tokens, no hardcoded values
+   - `rules/common/code.md` — style, immutability, file size
+   - `rules/common/design.md` (and `design-reference.md` for the detail) — design tokens, no hardcoded values
    - `rules/common/security.md` — secrets, input handling, auth
-   - `rules/common/commit-categories.md` — commit message tagging
-   - `rules/svelte/svelte-conventions.md` — runes, patterns, bind:value
+   - `rules/common/commits.md` — commit message tagging
+   - `rules/stack/svelte.md` — runes, patterns, bind:value
 3. Check for common issues:
    - New interactive elements → touch targets >= 32px?
    - `{@html}` usage → sanitized?

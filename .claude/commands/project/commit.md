@@ -16,7 +16,7 @@ Prepare and execute a clean commit with verification.
    - `any` types introduced
    - Unsanitized `{@html}` usage
 4. Stage related changes together (don't mix unrelated fixes)
-5. Write commit message following conventional commits, with at least one `[category]`-tagged line in the body per area actually touched — see `rules/common/commit-categories.md` (`[frontend]` / `[logic]` / `[content]` / `[backend]` / `[tooling]`). Blocked by `hooks/check-commit-tags.sh` if missing.
+5. Write commit message following conventional commits, with at least one `[category]`-tagged line in the body per area actually touched — see `rules/common/commits.md` (`[frontend]` / `[logic]` / `[content]` / `[backend]` / `[tooling]`). Blocked by `hooks/check-commit-tags.sh` if missing.
 
 ```
 <type>: <short description in present tense>
