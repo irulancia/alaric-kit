@@ -87,8 +87,8 @@ function applyTokens() {
     });
   }
   renderColorNotes(warnings);
-  document.getElementById('primary-hex').textContent = state.primary;
-  document.getElementById('secondary-hex').textContent = state.secondary;
+  showHex('primary', state.primary);
+  showHex('secondary', state.secondary);
   syncBackgroundField(tokens['--bg-primary']);
 
   document.getElementById('radius-value').textContent = state.radius + 'px';
@@ -118,9 +118,38 @@ function syncBackgroundField(page) {
   const input = document.getElementById('background');
   input.disabled = auto;
   input.value = shown;
-  document.getElementById('background-hex').textContent = shown;
+  document.getElementById('background-hex').disabled = auto;
+  showHex('background', shown);
   document.getElementById('auto-bg').checked = auto;
 }
+
+// The hex field beside each swatch: it shows the colour, and a pasted or typed one (with or without #, 3 or 6 digits)
+// goes to the swatch as soon as it is valid. While someone types in it, it isn't rewritten under them.
+function showHex(id, hex) {
+  const field = document.getElementById(id + '-hex');
+  if (document.activeElement !== field) field.value = hex;
+}
+function parseHex(text) {
+  const digits = text.trim().replace(/^#/, '');
+  if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(digits)) return null;
+  const full = digits.length === 3 ? [...digits].map((c) => c + c).join('') : digits;
+  return '#' + full.toLowerCase();
+}
+function bindHexField(id) {
+  const field = document.getElementById(id + '-hex');
+  const swatch = document.getElementById(id);
+  field.addEventListener('input', () => {
+    const hex = parseHex(field.value);
+    field.setAttribute('aria-invalid', String(!hex));
+    if (!hex || hex === swatch.value) return;
+    swatch.value = hex;
+    swatch.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  // Leaving the field (or Enter) shows the colour in use: an unfinished or invalid code goes back to it.
+  field.addEventListener('change', () => { field.removeAttribute('aria-invalid'); field.value = swatch.value; });
+  field.addEventListener('keydown', (e) => { if (e.key === 'Enter') field.blur(); });
+}
+['primary', 'secondary', 'background'].forEach(bindHexField);
 
 // A page colour whose hue is far from both Primary and Secondary adds a third hue: every grey takes it. Faint colours
 // (a near-white, a near-grey) have no hue worth naming, so they never warn.

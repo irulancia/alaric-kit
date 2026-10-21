@@ -64,12 +64,21 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
      Notes for Claude, in any language. Claude moves them into memory/backlog.md and deletes them from here.
      ```
    - **The generated pages, at the project root** (gitignored, regenerated; the root is where every project keeps them): run `node .claude/scripts/pages/generate-backlog.js`, then `node .claude/scripts/pages/generate-dashboard.js` (last, so it sees the backlog page). `history.html` waits for the first commit (`/project:history`).
-6. **The design system — every project starts from the kit's, not from scratch.** Skip only if `src/app.css` already exists with the configurator's header comment.
-   - Open `.claude/scripts/configurator/configurator.html` in the browser for the user (`start "" <path>` on Windows, `open` on macOS, `xdg-open` on Linux; if that fails, give the path). Tell them, in a few short lines: pick colors, fonts, density and shape; press **Save src/app.css** and save it in this project's `src/` folder; then say "done". Wait for that — don't write tokens yourself, and don't hand-edit the file.
+6. **Tell the user what got set up and what comes next — before the design system** (owner, 2026-10-21: „întâi văd mesajul cu 1. 2. 3. și apoi mă întreabă: configurezi app.css acum?”). In the user's language, short:
+   - one line on what was set up (`CLAUDE.md`, git — and what happened to the kit's history —, the license moved, the memory files, the pages), and the UI languages inferred in step 2;
+   - **the next steps, numbered**, each one line:
+     1. **Open `dashboard.html`** — its full path; everything starts there (backlog, inbox, rules, commands, configurator), and its **Start here** card shows which steps are done;
+     2. **The design system** — colours, fonts, density and shape, in the configurator; it is saved as `src/app.css`;
+     3. **The app** — say what to build; creating it also connects the design system;
+     4. **The decisions left for later**, if any (stack, backend, deploy) — they wait in the backlog;
+   - then ask one question: **configure the design system now?** — *Now* (step 7) or *Later* (the dashboard's Start here and the configurator's link stay there; whenever the user asks, run step 7).
+7. **The design system — every project starts from the kit's, not from scratch.** Skip only if `src/app.css` already exists with the configurator's header comment.
+   - Create the `src/` folder first if it doesn't exist (no app yet is the usual case): the save dialog can only offer a folder that is there (owner, 2026-10-21: „când salvez app.css nu văd niciun src folder”).
+   - Open `.claude/scripts/configurator/configurator.html` in the browser for the user (`start "" <path>` on Windows, `open` on macOS, `xdg-open` on Linux; if that fails, give the path). Tell them, in a few short lines: pick colors, fonts, density and shape; press **Save src/app.css** and save it in this project's `src/` folder — give that folder's full path; the dialog shows only `.css` files, so the project's other files don't appear in it — then say "done". Wait for that — don't write tokens yourself, and don't hand-edit the file.
    - When it's saved, read its header comment (the choices) and connect it: the stylesheet imported once for the whole app (SvelteKit: `import '../app.css';` in `src/routes/+layout.svelte`), then `src/project.css` right after it (`import '../project.css';`) — create it if it doesn't exist, with only this comment: `/* This project's own shared classes, on top of app.css. Tokens only; app.css is rewritten by the configurator, this file never is. A component keeps its styles inside itself. */` — and `class="ds-root"` on `<body>` (SvelteKit: `src/app.html`) — plus `controls-outline` / `controls-duotone` on the same element if the header says so. If the app doesn't exist yet (no `src/routes/`), say the wiring waits for it, and do it when it's created. Then rerun `node .claude/scripts/pages/generate-dashboard.js`: its "Start here" card ticks each step from what's in the project.
    - Reconcile `rules/common/design.md` and `design-reference.md` against the actual token names in `src/app.css` — it's a starting template, not a fixed spec. Don't invent a second, parallel token naming scheme. A variant this project needs goes in `src/project.css`, on top of `app.css`.
 
-## After Bootstrap
-Tell the user in a few lines what got set up (point them to `dashboard.html`, the entry point), the design choices from `app.css`'s header, and what (if anything) still needs a decision from them (e.g. stack mismatch, missing deploy target). Don't re-ask what was already inferred.
+## After the design system is saved
+A few lines, not the setup summary again (step 6 gave it): the design choices from `app.css`'s header, whether it is connected or waits for the app, and the step that is next now (usually 3, the app). Don't re-ask what was already inferred.
 
 A gap in the kit found while bootstrapping (or later in the project) goes into Alaric's own `memory/backlog.md`, not fixed in this project's copy of `.claude/` — every project keeps the same kit.
