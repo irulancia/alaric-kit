@@ -31,12 +31,12 @@
       "Bash(rm -rf *)",
       "Bash(* --no-verify*)",
       "Bash(* --no-gpg-sign*)",
-      "Write(.env*)",
-      "Write(node_modules/**/*)",
-      "Write(package-lock.json)",
-      "Write(pnpm-lock.yaml)",
-      "Write(yarn.lock)",
-      "Write(bun.lockb)"
+      "Edit(.env*)",
+      "Edit(node_modules/**/*)",
+      "Edit(package-lock.json)",
+      "Edit(pnpm-lock.yaml)",
+      "Edit(yarn.lock)",
+      "Edit(bun.lockb)"
     ],
     "ask": [
       "Bash(git push *)",
