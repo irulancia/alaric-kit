@@ -187,12 +187,28 @@ function computeNeutrals(secondary, background = null) {
 //   ui   (--accent-ui)   outlines, underlines, switch tracks, progress: 3:1 (WCAG 1.4.11)
 //   text (--accent-text) links, nav, labels on light surfaces: 4.5:1 (WCAG 1.4.3)
 // A light brand colour therefore keeps its fills but gets a darker shade for text and outlines.
-// Text in the secondary colour that stays readable on every surface and on its own light tint
-// (used by duotone buttons), same 4.6:1 target as --accent-text.
-const DUO_TINT = 0.22; // fill strength of duotone buttons and pills (the regular tint is 0.12)
-function secondaryText(secondary, n) {
+const DUO_TINT = 0.22; // fill strength of duotone pills and the destructive button (the regular tint is 0.12)
+// Duotone primary and secondary buttons (owner, 2026-10-21): part colour, part white, the page showing through
+// the rest. The white keeps the colour clean on a tinted page (22% of an orange over a mint page went a muddy
+// beige); the colour share sets the hierarchy, so it holds on a white page too, where the white changes nothing.
+const DUO_FILLS = { primary: { colour: 0.12, white: 0.20 }, secondary: { colour: 0.07, white: 0.73 } };
+// The fill as an rgba() token, and the colour it shows over a surface (what its text is checked against).
+function duoFill(ui, { colour, white }) {
+  const alpha = colour + white;
+  const solid = composite(ui, colour / alpha, '#ffffff');
+  return { css: rgba(solid, alpha), over: (surface) => composite(solid, alpha, surface) };
+}
+// Text in the secondary colour that stays readable on every surface, on its own light tint, on the
+// duotone button's fill as drawn and on the outline button's hover (a tint of the text itself),
+// same 4.6:1 target as --accent-text.
+const OUTLINE_HOVER_TINT = DUO_TINT / 4; // components.css: .controls-outline hover
+function secondaryText(secondary, ui, n) {
   const flat = [n.card, n.page, n.surface, n.hover];
-  return ensureContrast(secondary, [...flat, composite(secondary, 0.12, '#ffffff'), ...flat.map((s) => composite(secondary, DUO_TINT, s))], 4.6);
+  const fill = duoFill(ui, DUO_FILLS.secondary);
+  let text = ensureContrast(secondary, [...flat, composite(secondary, 0.12, '#ffffff'), ...flat.map(fill.over)], 4.6);
+  const onOwnHover = () => Math.min(...flat.map((s) => contrastRatio(text, composite(text, OUTLINE_HOVER_TINT, s))));
+  for (let i = 0; i < 100 && onOwnHover() < 4.6; i++) text = adjustLightness(text, -1);
+  return text;
 }
 function computeAccent(primary, n) {
   // Targets carry a small margin (3.05 / 4.6): browsers round each colour channel when they
@@ -205,7 +221,8 @@ function computeAccent(primary, n) {
   // same bug the status tints had on a cream page (2026-09-25). Over white the tint is clean on any page background.
   const tint = composite(ui, tintAlpha, '#ffffff');
   const tintSubtle = composite(ui, tintAlpha / 2, '#ffffff');
-  const tintSurfaces = [tint, tintSubtle, ...flat.map((s) => composite(ui, DUO_TINT, s))];
+  const duo = duoFill(ui, DUO_FILLS.primary);
+  const tintSurfaces = [tint, tintSubtle, ...flat.map((s) => composite(ui, DUO_TINT, s)), ...flat.map(duo.over)];
   const text = ensureContrast(primary, [...flat, ...tintSurfaces], 4.6);
   return {
     '--accent': primary,
@@ -215,6 +232,7 @@ function computeAccent(primary, n) {
     '--accent-text-hover': ensureContrast(adjustLightness(text, -8), [...flat, ...tintSurfaces], 4.6), // link hover: text-safe, unlike --accent-hover (a fill)
     '--accent-bg': tint,
     '--accent-bg-subtle': tintSubtle,
+    '--duo-bg-primary': duo.css,
     '--on-accent': onColor(primary),
     '--focus-ring': ui,
   };
@@ -224,14 +242,16 @@ function computeAccent(primary, n) {
 function paletteTokens(primary, secondary, n) {
   const p = hexToRgb(primary);
   const s = hexToRgb(secondary);
+  const secondaryUi = ensureContrast(secondary, [n.card, n.page, n.surface], 3);
   return {
     ...computeAccent(primary, n),
     '--accent-rgb': `${p.r}, ${p.g}, ${p.b}`,
     '--secondary': secondary,
     '--secondary-hover': hoverColor(secondary, onColor(secondary), [n.card, n.page]),
-    '--secondary-ui': ensureContrast(secondary, [n.card, n.page, n.surface], 3), // focus ring of secondary buttons
-    '--secondary-text': secondaryText(secondary, n),
+    '--secondary-ui': secondaryUi, // focus ring and duotone outline of secondary buttons
+    '--secondary-text': secondaryText(secondary, secondaryUi, n),
     '--duo-tint': `${Math.round(DUO_TINT * 100)}%`,
+    '--duo-bg-secondary': duoFill(secondaryUi, DUO_FILLS.secondary).css,
     '--secondary-bg': composite(secondary, 0.12, '#ffffff'),   // opaque, like the accent tints (see computeAccent)
     '--secondary-bg-subtle': composite(secondary, 0.06, '#ffffff'),
     '--secondary-rgb': `${s.r}, ${s.g}, ${s.b}`,

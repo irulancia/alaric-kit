@@ -94,6 +94,20 @@ function onColor(bg) {
   return passing.reduce((best, c) => (Math.abs(apcaLc(c, bg)) > Math.abs(apcaLc(best, bg)) ? c : best));
 }
 
+// How different two colours look: CIE76 ΔE in CIELAB (D65). About 2 is barely visible, under ~15 reads as "the same colour".
+function labOf(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  const [R, G, B] = [lin(r), lin(g), lin(b)];
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+  const [x, y, z] = [(0.4124 * R + 0.3576 * G + 0.1805 * B) / 0.95047, 0.2126 * R + 0.7152 * G + 0.0722 * B, (0.0193 * R + 0.1192 * G + 0.9505 * B) / 1.08883].map(f);
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+function deltaE(a, b) {
+  const [p, q] = [labOf(a), labOf(b)];
+  return Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
+}
+
 // WCAG 2 and APCA disagree on mid-tone fills: dark text can pass the ratio and
 // still read weakly, white can read well and fail the ratio. No text colour
 // satisfies both there, so the only fix is the fill. This finds the nearest

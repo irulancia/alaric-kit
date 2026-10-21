@@ -704,8 +704,9 @@ button.avatar:is(:focus-visible, .is-focus) { outline: 2px solid var(--focus-rin
 
 /* Icon-style controls (opt-in: class "controls-outline" or "controls-duotone" on the root, set by the
    configurator's "Affect buttons and pills"). Filled = the solid default above. Outline: transparent
-   with a 2px border in the button's own colour. Duotone: the same border plus a tint of that colour
-   (--duo-tint). Hover: outline gets a light tint, duotone fills solid. Tertiary and ghost keep their look so
+   with a 2px border in the button's own colour. Duotone: the same border plus a tint of that colour: part
+   colour, part white, the page showing through the rest (--duo-bg-primary is stronger than --duo-bg-secondary;
+   destructive and pills take --duo-tint). Hover: outline gets a light tint, duotone fills solid. Tertiary and ghost keep their look so
    primary and tertiary stay distinguishable. Text is the -text / -strong shade of the hue, checked against
    the tint, so mid-tone brand colours need no white/black call. */
 :is(.controls-outline, .controls-duotone) .btn-primary { --btn-fg: var(--accent-text); --ring-color: var(--accent-ui); }
@@ -717,7 +718,9 @@ button.avatar:is(:focus-visible, .is-focus) { outline: 2px solid var(--focus-rin
 .controls-outline .btn-secondary { --btn-fg: var(--secondary-text); --ring-color: var(--secondary-text); }
 .controls-outline .btn-destructive { --btn-fg: var(--error-text); --ring-color: var(--error-text); }
 .controls-outline :is(.btn-primary, .btn-secondary, .btn-destructive) { background: transparent; }
-.controls-duotone :is(.btn-primary, .btn-secondary, .btn-destructive) { background: color-mix(in srgb, var(--ring-color) var(--duo-tint), transparent); }
+.controls-duotone .btn-primary { background: var(--duo-bg-primary); }
+.controls-duotone .btn-secondary { background: var(--duo-bg-secondary); }
+.controls-duotone .btn-destructive { background: color-mix(in srgb, var(--ring-color) var(--duo-tint), transparent); }
 .controls-outline :is(.btn-primary, .btn-secondary, .btn-destructive):is(:hover, .is-hover) { background: color-mix(in srgb, var(--ring-color) calc(var(--duo-tint) / 4), transparent); }
 .controls-duotone .btn-primary:is(:hover, .is-hover) { background: var(--accent); --btn-fg: var(--on-accent); border-color: var(--accent); }
 .controls-duotone .btn-secondary:is(:hover, .is-hover) { background: var(--secondary); --btn-fg: var(--on-secondary); border-color: var(--secondary); }

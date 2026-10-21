@@ -84,6 +84,8 @@ function applyTokens() {
   }
   const thirdHue = pageThirdHue();
   if (thirdHue) warnings.push(thirdHue);
+  const outlinePair = outlinePairAlike(tokens);
+  if (outlinePair) warnings.push(outlinePair);
   if (state.contrast === 'apca') {
     [['Primary', state.primary], ['Secondary', state.secondary]].forEach(([name, fill]) => {
       const ratio = contrastRatio(fill, onColor(fill));
@@ -167,6 +169,16 @@ function pageThirdHue() {
   const apart = (hex) => { const h = hueOf(hex); const d = Math.abs(h.h - page.h) % 360; return h.s < 10 || Math.min(d, 360 - d) >= THIRD_HUE_MIN_DEG; };
   if (!apart(state.primary) || !apart(state.secondary)) return null;
   return 'The page colour adds a third hue next to Primary and Secondary: surfaces, borders and grey text take it. A near-white, or a page close to one of your two colours, keeps the palette to two.';
+}
+
+// Outline buttons have no fill: primary and secondary differ only by their text-safe shades. When those come out
+// alike (a secondary in the primary's hue family, 2026-10-21), nothing else can tell the two apart — the panel says
+// so rather than changing the chosen colours. Duotone separates them by how much colour they hold.
+const OUTLINE_PAIR_MIN_DE = 15;
+function outlinePairAlike(tokens) {
+  if (!state.styleControls || state.iconStyle !== 'outline') return null;
+  if (deltaE(tokens['--accent-text'], tokens['--secondary-text']) >= OUTLINE_PAIR_MIN_DE) return null;
+  return 'As outlines, Primary and Secondary buttons come out almost the same colour. A Secondary further from Primary, or Duotone, tells them apart.';
 }
 
 // The inputs that applyTokens() doesn't set itself (colours, fonts), from the state: on load and after a reset / undo.
