@@ -71,8 +71,8 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
 6. **Tell the user what got set up and what comes next — before the design system** (owner, 2026-10-21: „întâi văd mesajul cu 1. 2. 3. și apoi mă întreabă: configurezi app.css acum?”). In the user's language, short:
    - one line on what was set up (`CLAUDE.md`, git — and what happened to the kit's history —, the license moved, the memory files, the pages), and the UI languages inferred in step 2;
    - **the next steps, numbered**, each one line:
-     1. **Open `dashboard.html`** — its full path; everything starts there (backlog, inbox, rules, commands, configurator), and its **Start here** card shows which steps are done;
-     2. **The design system** — colours, fonts, density and shape, in the configurator; it is saved as `src/app.css`;
+     1. **The design system** — colours, fonts, density and shape, in the configurator; it is saved as `src/app.css` (the question below);
+     2. **`dashboard.html`, the home base** — its full path; the backlog, the inbox, the rules, the commands and the configurator are one click away, and its **Start here** card shows which steps are done;
      3. **The app** — say what to build; creating it also connects the design system;
      4. **The decisions left for later**, if any (stack, backend, deploy) — they wait in the backlog;
    - then ask one question: **configure the design system now?** — *Now* (step 7) or *Later* (the dashboard's Start here and the configurator's link stay there; whenever the user asks, run step 7).
