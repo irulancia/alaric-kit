@@ -11,6 +11,10 @@
 // the largest radius (buttons become pills; cards and fields keep their own caps) and duotone icons.
 const DEFAULTS = { primary: '#ec5106', secondary: '#e7e1d3', customBg: false, background: '#faf7f1', fontDisplay: 'Poppins', fontBody: 'Nunito', radius: 28, shadow: 'soft', density: 'normal', contrast: 'apca', iconStyle: 'duotone', styleControls: false };
 const state = { ...DEFAULTS };
+// The choices are remembered per project: the browser gives every page opened from the disk one shared storage, so one
+// key for all would open a new project with the last project's colours (owner, 2026-10-21). The project is the folder
+// the configurator sits in.
+const STATE_KEY = 'ds-configurator-state:' + decodeURIComponent(location.pathname.replace(/\/\.claude\/scripts\/configurator\/configurator\.html$/, ''));
 
 // Segmented controls: highlight the chosen option and expose it to assistive tech.
 function markActive(group, value) {
@@ -105,7 +109,7 @@ function applyTokens() {
   preview.classList.toggle('controls-duotone', canStyle && state.styleControls && state.iconStyle === 'duotone');
   window.dsHydrateIcons(preview, state.iconStyle);
 
-  try { localStorage.setItem('ds-configurator-state', JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {}
   syncResetButton();
 }
 
@@ -200,7 +204,7 @@ document.getElementById('reset-btn').addEventListener('click', () => {
 // Only accept values the current version understands, so an older saved state can't break the page.
 function loadSaved() {
   try {
-    const saved = JSON.parse(localStorage.getItem('ds-configurator-state'));
+    const saved = JSON.parse(localStorage.getItem(STATE_KEY));
     if (!saved) return;
     const hex = /^#[0-9a-fA-F]{6}$/;
     if (hex.test(saved.primary)) state.primary = saved.primary;
