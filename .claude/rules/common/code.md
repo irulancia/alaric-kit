@@ -29,7 +29,12 @@ Exception: `$state` runes in Svelte 5 are designed for direct mutation.
 
 ## Error Handling
 - Handle errors explicitly — never swallow silently
-- User-facing: friendly messages in English
+- User-facing: friendly messages, in the project's UI languages
+
+## UI Languages
+- The languages are in `CLAUDE.md` ("UI languages"): the user's own, plus English when theirs isn't English (`/project:bootstrap`)
+- One language: plain strings are fine. Two or more: every user-facing string — labels, buttons, errors, empty states, page titles — goes through the translation files from the first page, never written into a component; a string added in one language is added in all of them
+- The visitor's browser language picks among them; English when it asks for none of them
 
 ## Constants Over Magic Values
 ```ts
@@ -49,4 +54,4 @@ const ORDER_STATUS = { PENDING: 1, ACTIVE: 2, COMPLETE: 3 } as const;
 - [ ] No hardcoded values
 - [ ] No `console.log` left in code
 - [ ] No `any` type in TypeScript
-- [ ] English UI text for user-facing strings
+- [ ] User-facing strings in every UI language (through the translation files, when there are two)

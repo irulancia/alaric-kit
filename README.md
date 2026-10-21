@@ -6,8 +6,8 @@ Alaric is part of [AMBIE Garden](https://ambiegarden.com), free tools for design
 
 ## Starting a new project
 
-1. **Copy this kit folder** and rename the copy to your project's name.
-2. **Open Claude Code in it** and type `/project:bootstrap` (Claude offers it on its own the first time). It asks a few questions — stack, backend, UI language, where you deploy; any of them can be left for later, and goes into the backlog as a decision — then sets the project up: `CLAUDE.md`, git, `memory/backlog.md`, `memory/inbox.md` and the pages below.
+1. **Get the kit** — on GitHub, **Code → Download ZIP** — unzip it and rename the folder to your project's name. (Cloned it instead? Fine: bootstrap gives the project a fresh git history of its own.)
+2. **Open Claude Code in it** and type `/project:bootstrap` (Claude offers it on its own the first time). It asks a few questions — stack, backend, where you deploy; any of them can be left for later, and goes into the backlog as a decision — then sets the project up: `CLAUDE.md`, git, `memory/backlog.md`, `memory/inbox.md` and the pages below. The app's languages aren't asked: it is in the language you write to Claude in, plus English if that isn't English.
 3. **Pick your design system.** Claude opens the configurator: choose colors, fonts, density and shape, press **Save src/app.css** and save it in your project's `src/` folder. Tell Claude "done" — it connects the file to the app (`class="ds-root"` on `<body>`, the stylesheet imported once).
 4. **Open `dashboard.html`** at the project root. Everything starts there: the backlog, the inbox, the rules, the commands, the configurator. Until the project is fully set up, its **Start here** card shows which of these steps are done and what's next. It's generated and gitignored: `/project:dashboard` rebuilds it.
 

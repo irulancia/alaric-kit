@@ -13,7 +13,7 @@ if [ -f "CLAUDE.md" ] || [ -f ".claude/CLAUDE.md" ]; then
       console.log(JSON.stringify({
         hookSpecificOutput: {
           hookEventName: 'SessionStart',
-          additionalContext: 'memory/inbox.md has $NOTES note(s) from the owner waiting (any language, any shape). Tell her, then move each into memory/backlog.md: rewritten in the project format with her words quoted, an area tag and a size. Then delete the moved notes from the inbox (keep its header).'
+          additionalContext: 'memory/inbox.md has $NOTES note(s) from the owner waiting (any language, any shape). Tell the owner, then move each into memory/backlog.md: rewritten in the project format with their words quoted, an area tag and a size. Then delete the moved notes from the inbox (keep its header).'
         }
       }));
     "

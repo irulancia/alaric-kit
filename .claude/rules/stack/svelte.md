@@ -73,6 +73,10 @@ function initializeAnswers() {
 - Paste handler on `.card`: strip formatting with `document.execCommand('insertText', false, text)`
 - Placeholder fix: `onfocusin` saves placeholder to `data-placeholder-text` and clears; `onfocusout` restores if empty
 
+## Translations (two or more UI languages, see `code.md`)
+- Paraglide, SvelteKit's own i18n add-on: `npx sv add paraglide` when the app is created; messages in `messages/<lang>.json`, used as `m.save_changes()`
+- The browser's language picks the locale, English as the fallback: `baseLocale: "en"`, and `preferredLanguage` before `baseLocale` in the strategy
+
 ## TypeScript
 - Always type component props with interface + `$props()`
 - No `any` — use `unknown` and narrow, or define the type

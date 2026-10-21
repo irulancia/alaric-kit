@@ -6,7 +6,7 @@
 INPUT=$(cat)
 
 # Stop hooks run again after Claude continues: block once, then let it stop. A console.log it can't or mustn't
-# remove (one the owner left in a file she is working on) would otherwise keep the session in a loop.
+# remove (one the owner left in a file they are working on) would otherwise keep the session in a loop.
 ACTIVE=$(echo "$INPUT" | node -e "
   let d='';
   process.stdin.on('data', c => d+=c);
@@ -18,7 +18,9 @@ ACTIVE=$(echo "$INPUT" | node -e "
 
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
-FILES=$(git status --porcelain 2>/dev/null | awk '{print $2}' | grep -E '\.(svelte|ts)$')
+# -uall lists each file in a new folder: without it git reports only `src/`, and none of a new project's files
+# were checked (found 2026-10-21). `cut -c4-` keeps the path, `sed` keeps a renamed file's new name.
+FILES=$(git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -E '\.(svelte|ts)$')
 
 if [ -z "$FILES" ]; then
   exit 0

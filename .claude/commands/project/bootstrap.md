@@ -10,13 +10,14 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
 
 ## Steps
 1. Look at what already exists before asking anything — `package.json`, lockfile, existing `src/` structure, `.git` remote, any README. Infer as much as possible.
-2. This template defaults to: **SvelteKit + Svelte 5**, design tokens in `src/app.css` (`:root`), English UI text (`code.md`), npm. Confirm these still apply, and only ask the user about what can't be inferred from the repo:
+2. This template defaults to: **SvelteKit + Svelte 5**, design tokens in `src/app.css` (`:root`), npm. Confirm these still apply, and only ask the user about what can't be inferred from the repo:
    - Framework/stack (if not Svelte — see step 3)
    - Backend (Supabase? none? something else?)
-   - UI language
    - Deploy target
 
-   **Every question can be left for later** — at the start of a project the user often doesn't know yet, and that must never block the setup (owner, 2026-10-14: "mă întreabă cam devreme… ar trebui să am și opțiune că mă decid mai târziu"). Ask in plain words, saying in one line what the choice affects (e.g. "Backend — where the app keeps its data and accounts, if it needs any"), and always offer **Decide later** as an option next to the concrete ones. For anything left for later: keep the default (Svelte, English, npm) or "none yet" (backend, deploy), write "Not decided yet" for it in `CLAUDE.md`, and add a `{decision}` item for it to `memory/backlog.md` (step 5). Don't ask twice in the same session.
+   **The UI languages are not asked — they come from the language the user writes to you in** (owner, 2026-10-21: „ar trebui să fie limba userului care deschide și engleza dacă există altă limbă diferită de engleză”). English → the app is in English. Any other language → the app is in that language **and** English: a visitor sees the one their browser asks for, and English when it asks for neither. Write it in `CLAUDE.md` (`UI languages: ro (default), en`), say it in the summary in one line, and change it if the user says otherwise. With two languages, every user-facing string goes through the translation files from the first page (`code.md`).
+
+   **Every question can be left for later** — at the start of a project the user often doesn't know yet, and that must never block the setup (owner, 2026-10-14: "mă întreabă cam devreme… ar trebui să am și opțiune că mă decid mai târziu"). Ask in plain words, saying in one line what the choice affects (e.g. "Backend — where the app keeps its data and accounts, if it needs any"), and always offer **Decide later** as an option next to the concrete ones. For anything left for later: keep the default (Svelte, npm) or "none yet" (backend, deploy), write "Not decided yet" for it in `CLAUDE.md`, and add a `{decision}` item for it to `memory/backlog.md` (step 5). Don't ask twice in the same session.
 3. If the stack is **not** Svelte (decided, not left for later), adjust the template instead of leaving stale assumptions:
    - Rewrite or remove `rules/stack/svelte.md`
    - Rewrite or remove `hooks/check-types.sh` and its `Stop` entry in `settings.json` (swap in the right type-checker/linter for the actual stack)
@@ -28,7 +29,7 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
    ## Tech Stack
    - Framework: ...
    - Backend: ...   (or "Not decided yet — see the backlog")
-   - Language: ...
+   - UI languages: ...   (e.g. "ro (default), en" — step 2)
    - Styling: ...
    - Package manager: ...
    - Deploy: ...    (or "Not decided yet — see the backlog")
@@ -46,7 +47,7 @@ Goal: turn the generic template into a project-specific setup, without re-litiga
    - `.env` — edit through environment variables only
    ```
 5. Set up what the kit's commands, pages and hooks depend on. Create only what's missing, never overwrite (bootstrap may run on a project that already has some of it):
-   - **git:** `git init` if there's no `.git`. No commit — commits need the user's go-ahead and the category tags (`commits.md`). `/project:history`, `/project:commit` and `check-commit-tags.sh` need a repo.
+   - **git:** `git init` if there's no `.git`. **A `.git` that is the kit's own** (its `origin` is the kit's repo, `alaric-kit`) came with a `git clone` of the kit: the project doesn't keep it, and nothing is asked (owner, 2026-10-21). If every commit is the kit's (`git rev-list HEAD --not --remotes` prints nothing), start a fresh history with git alone — `git remote remove origin`, `git checkout --orphan fresh`, `git rm -r -q --cached .`, delete the old branch and rename `fresh` to it, `git reflog expire --expire=now --all`, `git gc -q --prune=now` — the files stay, the kit's commits go (they are still on GitHub). If the project already has commits of its own, only `git remote remove origin`. Say which in the summary. No commit — commits need the user's go-ahead and the category tags (`commits.md`). `/project:history`, `/project:commit` and `check-commit-tags.sh` need a repo.
    - **the kit's license:** a `LICENSE` at the root that starts with `MIT License` and names Irina Sima is the kit's, not the project's. Move it to `.claude/LICENSE` (it covers the kit's files, and its notice has to stay with them); the root is left for the project's own license, if it wants one. Don't ask, and say it in the summary.
    - **git identity:** check `git config user.name` and `git config user.email` (they may be set only per repo, not globally). If either is empty, ask the user for it and set it for this repo only (`git config user.name "…"`); otherwise the first commit fails with "Author identity unknown".
    - **`memory/backlog.md`** — the source `/project:backlog` reads (it fails without it):

@@ -20,8 +20,8 @@ ACTIVE=$(echo "$INPUT" | node -e "
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
 # Only when this task touched Svelte/TS files, and only when svelte-check is installed (npx would otherwise
-# try to download it).
-git status --porcelain 2>/dev/null | awk '{print $2}' | grep -qE '\.(svelte|ts)$' || exit 0
+# try to download it). -uall: each file in a new folder, not just the folder (see check-code-quality.sh).
+git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -qE '\.(svelte|ts)$' || exit 0
 [ -x node_modules/.bin/svelte-check ] || exit 0
 
 # A fresh checkout has no .svelte-kit types yet: without them every route reports false errors.

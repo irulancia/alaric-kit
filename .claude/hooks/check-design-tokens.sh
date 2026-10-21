@@ -50,16 +50,19 @@ CODE_LINES=$(echo "$CONTENT" | grep -vE '^\s*(//|/\*|\*)')
 
 VIOLATIONS=""
 
-if echo "$CODE_LINES" | grep -qE '#[0-9a-fA-F]{3,8}\b'; then
+# A hex colour is a value: after a `:` (a property, an inline style), with no selector before it — so an id
+# selector (`#feed {`), a link (`href="#add"`, `https://x/#top`) and a Svelte block are not colours.
+VALUES=$(echo "$CODE_LINES" | sed 's/^[^{]*{//')
+if echo "$VALUES" | grep -qE ':[^;{}"/]*#[0-9a-fA-F]{3,8}\b'; then
   VIOLATIONS="${VIOLATIONS}\n- hardcoded hex color (e.g. #3a3a3a) — use a color token from app.css (--bg-*, --text-*, --accent, --border, etc.)"
 fi
 
 if echo "$CODE_LINES" | grep -qE 'rgba?\(\s*[0-9]'; then
-  VIOLATIONS="${VIOLATIONS}\n- rgb()/rgba() with literal numeric values — use rgba(var(--fg-rgb), X) or an existing token (--accent-bg, --border-subtle etc.)"
+  VIOLATIONS="${VIOLATIONS}\n- rgb()/rgba() with literal numeric values — use an existing token (--accent-bg, --border-subtle, --overlay etc.) or rgba(var(--accent-rgb), X)"
 fi
 
 if echo "$CODE_LINES" | grep -qE 'font-size\s*:\s*[0-9]'; then
-  VIOLATIONS="${VIOLATIONS}\n- hardcoded font-size — use var(--text-display|heading|title|body|small|xs)"
+  VIOLATIONS="${VIOLATIONS}\n- hardcoded font-size — use var(--text-display|h1|h2|h3|body|ui|small|xs)"
 fi
 
 if echo "$CODE_LINES" | grep -qE 'font-weight\s*:\s*[0-9]'; then
@@ -71,7 +74,7 @@ if echo "$CODE_LINES" | grep -qE '(padding|margin|gap)[a-zA-Z-]*\s*:\s*[0-9]+(\.
 fi
 
 if echo "$CODE_LINES" | grep -qE 'border-radius\s*:\s*[0-9]+(\.[0-9]+)?(px|rem)'; then
-  VIOLATIONS="${VIOLATIONS}\n- hardcoded border-radius — use var(--radius-sm|--radius|--radius-lg|--radius-pill)"
+  VIOLATIONS="${VIOLATIONS}\n- hardcoded border-radius — use var(--radius-control|field|chip|surface|overlay|pill)"
 fi
 
 if [ -z "$VIOLATIONS" ]; then

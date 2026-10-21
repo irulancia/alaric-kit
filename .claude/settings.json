@@ -19,12 +19,11 @@
       "Bash(mkdir *)",
       "Bash(cat *)",
       "Read",
-      "Write(src/**/*)",
-      "Write(static/**/*)",
-      "Write(tests/**/*)",
-      "Write(CLAUDE.md)",
-      "Write(CLAUDE.local.md)",
-      "Write(.claude/**/*)",
+      "Edit(src/**/*)",
+      "Edit(static/**/*)",
+      "Edit(tests/**/*)",
+      "Edit(CLAUDE.md)",
+      "Edit(CLAUDE.local.md)",
       "WebSearch"
     ],
     "deny": [
