@@ -38,13 +38,13 @@ description: The pipeline from bootstrap to commit, and when a git push needs ex
 
 ### PUSH — EXPLICIT APPROVAL REQUIRED
 - **NEVER `git push` without explicit user request** — commit locally, stop there
-- Push only when the user says so explicitly (e.g. "dă push", "push it", "trimite pe GitHub")
+- Push only when the user says so explicitly (e.g. "push it", "send it to GitHub", in any language)
 - This applies to ALL branches and ALL remotes, including `master` / `main`
-- **O aprobare anterioară NU autorizează push-uri ulterioare** — fiecare push necesită aprobare separată
-- **Dacă userul a aprobat un push și mai există commit-uri de dat, oprește-te și cere aprobare din nou**
-- Nu combina niciodată commit + push într-o singură comandă fără aprobare explicită pentru acel push specific
-- Fiecare `git push` cere confirmarea owner-ului prin `hooks/check-push.sh`, în orice mod — `ask` din `settings.json` singur a lăsat un push să treacă în auto mode (2026-10-19)
-- `--no-verify` / `--no-gpg-sign` sunt blocate mecanic prin `settings.json` (`deny`) — nu doar o regulă scrisă
+- **An earlier approval does NOT cover later pushes** — every push needs its own approval
+- **If the user approved a push and more commits are left to push, stop and ask again**
+- Never combine commit + push in one command without explicit approval for that specific push
+- Every `git push` asks the owner to confirm through `hooks/check-push.sh`, in every mode — the `ask` in `settings.json` alone let a push through in auto mode
+- `--no-verify` / `--no-gpg-sign` are blocked mechanically by `settings.json` (`deny`) — not just a written rule
 
 ### Step 5 — Update Memory
 - After significant tasks: update MEMORY.md (automatic, don't ask)

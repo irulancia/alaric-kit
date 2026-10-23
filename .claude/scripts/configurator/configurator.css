@@ -64,7 +64,7 @@ body { margin: 0; background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mi
 .cfg-value { font-variant-numeric: tabular-nums; color: var(--cfg-text); }
 .cfg-color { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 4px; border: 1px solid var(--cfg-border); border-radius: 8px; background: var(--cfg-surface); }
 .cfg-color input[type=color] { flex-shrink: 0; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 5px; background: none; cursor: pointer; }
-/* The hex beside the swatch is a field: a colour can be pasted or typed (owner, 2026-10-21: „nu pot da paste la o culoare”). */
+/* The hex beside the swatch is a field: a colour can be pasted or typed (owner, 2026-10-21: a colour could not be pasted). */
 .cfg-hex { flex: 1; width: 0; min-width: 0; padding: 4px 6px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: var(--cfg-text); font: 0.75rem ui-monospace, SFMono-Regular, Consolas, monospace; text-transform: uppercase; }
 .cfg-hex:hover:not(:disabled) { border-color: var(--cfg-border); }
 .cfg-hex:focus-visible { outline: 2px solid var(--cfg-text); outline-offset: 1px; }

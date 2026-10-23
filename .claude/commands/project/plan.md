@@ -41,7 +41,7 @@ One paragraph describing what this does and why.
 ### Checklist
 - [ ] Design tokens used (no hardcoded colors/spacing/fonts)
 - [ ] Touch targets >= 32px on new interactive elements
-- [ ] Romanian UI text used (if applicable)
+- [ ] User-facing text in every UI language listed in CLAUDE.md
 ```
 
 ## Important

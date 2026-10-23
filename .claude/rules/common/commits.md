@@ -8,10 +8,10 @@ Every commit message body must tag at least one of these 5 categories, one line 
 
 ## The 5 categories
 - `[frontend]` — **Frontend & Design**: UI, information architecture, navigation flows, UX micro-interactions
-- `[logic]` — **Funcționalitate & Logică**: business rules, algorithms, features (NOT auth/permissions — that's `[backend]`)
-- `[content]` — **Conținut & Date**: text, media, data structure, localization/language
-- `[backend]` — **Backend & Infrastructură**: database, servers, security, auth, permissions, external integrations, performance
-- `[tooling]` — **Unelte de dezvoltare**: `.claude/` (hooks, commands, rules, scripts), CI, build config — anything about *how we build*, not the shipped app itself
+- `[logic]` — **Functionality & Logic**: business rules, algorithms, features (NOT auth/permissions — that's `[backend]`)
+- `[content]` — **Content & Data**: text, media, data structure, localization/language
+- `[backend]` — **Backend & Infrastructure**: database, servers, security, auth, permissions, external integrations, performance
+- `[tooling]` — **Development tools**: `.claude/` (hooks, commands, rules, scripts), CI, build config — anything about *how we build*, not the shipped app itself
 
 Auth and permissions always go under `[backend]`, never `[logic]` — avoids ambiguity between "business rule" and "who's allowed to do it." Changes to `.claude/` itself always go under `[tooling]`, never `[backend]`, even though both can involve config files.
 
