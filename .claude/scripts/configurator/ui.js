@@ -7,7 +7,7 @@
 // (legal standard). 'apca' = APCA decides alone (reads better on mid-tones, draft standard).
 // customBg: false = the page is automatic, a near-white tinted with Secondary (the default); true = the page is exactly `background`.
 // Either way the greys (surfaces, borders, grey text) follow the page.
-// Defaults chosen by the owner, 2026-10-14 ("ceva mai modern"): a vivid orange, a warm sand, a cream page, Poppins + Nunito,
+// Defaults chosen by the owner, 2026-10-14 ("something more modern"): a vivid orange, a warm sand, a cream page, Poppins + Nunito,
 // the largest radius (buttons become pills; cards and fields keep their own caps) and duotone icons.
 const DEFAULTS = { primary: '#ec5106', secondary: '#e7e1d3', customBg: false, background: '#faf7f1', fontDisplay: 'Poppins', fontBody: 'Nunito', radius: 28, shadow: 'soft', density: 'normal', contrast: 'apca', iconStyle: 'duotone', styleControls: false };
 const state = { ...DEFAULTS };
@@ -116,8 +116,8 @@ function applyTokens() {
 }
 
 // The page background field always shows the page's colour: computed from Secondary while "Automatic" is on (and not
-// editable then; a small "Auto" at the end of the row, owner: "pune Automatic și atât pe același rând"), the owner's own pick once it is off (owner, 2026-10-14: "de ce nu se calculează automat page background
-// de fiecare dată când schimbi secundara… o bifă Automat bifată by default și când o debifezi o poți selecta tu").
+// editable then; a small "Auto" at the end of the row, owner: "just Automatic, on the same row"), the owner's own pick once it is off (owner, 2026-10-14: the page background should
+// recalculate whenever the secondary changes, with an Automatic box ticked by default that frees the choice once unticked).
 function syncBackgroundField(page) {
   const auto = !state.customBg;
   const shown = auto ? page : state.background;
