@@ -19,7 +19,7 @@ Run a comprehensive bug audit on the codebase.
    - Auth bypass possibilities
 4. Categorize findings: CRITICAL / HIGH / MEDIUM / LOW
 5. Save results to `memory/bugs-audit-{date}.md`
-6. Update summary in MEMORY.md
+6. Add each finding that isn't fixed now to `memory/backlog.md` (`{bug}`, with its severity)
 
 ## Output Format
 ```

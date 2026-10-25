@@ -1,6 +1,6 @@
 /* Configurator chrome. Prefixed cfg- so it never collides with component classes.
-   Alaric's own pages (dashboard, backlog, git history, inbox, the configurator's panel and stage) are DARK ONLY (owner,
-   2026-10-14) — there is no light variant any more. The design system in #preview is not affected: it keeps its own
+   Alaric's own pages (dashboard, backlog, git history, inbox, the configurator's panel and stage) are DARK ONLY —
+   there is no light variant any more. The design system in #preview is not affected: it keeps its own
    light tokens, and its own color-scheme. */
 :root {
   color-scheme: dark;   /* native controls (selects, checkboxes, scrollbars) follow */
@@ -64,7 +64,7 @@ body { margin: 0; background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mi
 .cfg-value { font-variant-numeric: tabular-nums; color: var(--cfg-text); }
 .cfg-color { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 4px; border: 1px solid var(--cfg-border); border-radius: 8px; background: var(--cfg-surface); }
 .cfg-color input[type=color] { flex-shrink: 0; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 5px; background: none; cursor: pointer; }
-/* The hex beside the swatch is a field: a colour can be pasted or typed (owner, 2026-10-21: a colour could not be pasted). */
+/* The hex beside the swatch is a field: a colour can be pasted or typed. */
 .cfg-hex { flex: 1; width: 0; min-width: 0; padding: 4px 6px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: var(--cfg-text); font: 0.75rem ui-monospace, SFMono-Regular, Consolas, monospace; text-transform: uppercase; }
 .cfg-hex:hover:not(:disabled) { border-color: var(--cfg-border); }
 .cfg-hex:focus-visible { outline: 2px solid var(--cfg-text); outline-offset: 1px; }
@@ -89,7 +89,7 @@ body { margin: 0; background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mi
 .cfg-check-row[hidden] { display: none; }
 .cfg-check-row > .cfg-check { margin-top: 0; }
 /* Explanations: an "i" beside the label, its text in a tooltip (hover, a click or a tap, Tab; Esc closes it) — one way
-   for the whole panel instead of "+ How it applies" blocks that pushed the controls down (owner, 2026-10-14). The notes
+   for the whole panel instead of "+ How it applies" blocks that pushed the controls down. The notes
    on your colours are warnings, not explanations: a warning mark with their count beside "Color", same tooltip. */
 .cfg-icon { display: inline-block; flex-shrink: 0; width: 16px; height: 16px; fill: currentColor; }
 .cfg-tip { position: relative; display: inline-flex; }
@@ -164,7 +164,7 @@ body { margin: 0; background: linear-gradient(180deg, var(--cfg-bg) 0%, color-mi
 /* The example site's Home is a site page, not an app page: no sidebar, full-bleed bands (the hero) with their own
    side padding instead of the app shell's. */
 .demo-page[data-layout=site] .sidebar { display: none; }
-/* The example site's width (a choice of this site, not of the design system — owner, 2026-10-14): a band's background
+/* The example site's width (a choice of this site, not of the design system): a band's background
    runs edge to edge while its content stops at 72rem, centred; the app's shell stops at 90rem. */
 #demo-app[data-layout=site] :is(.hero, .band, .footer-site) { padding-inline: max(var(--space-6), calc((100% - 72rem) / 2)); }
 #demo-app[data-layout=site] .navbar { padding-inline: max(var(--space-5), calc((100% - 72rem) / 2)); }

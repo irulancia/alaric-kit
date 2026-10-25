@@ -64,7 +64,7 @@ const TYPE_RATIOS = { compact: 1.25, normal: 1.333, spacious: 1.333 }; // Major 
 const BODY_PX = { compact: 14, normal: 16, spacious: 18 };
 // The text of CONTROLS (buttons, segmented, switch / check / radio labels, tabs, menus, the navbar's links) is not the
 // text you READ: Material 3 (label-large 14 vs body-large 16), Carbon (body-compact 14 for UI), Apple (13pt controls).
-// Amended 2026-10-04 (owner: "16px doesn't mean everything is 16px"): controls had taken the body size.
+// A 16px body doesn't make every control 16px: controls had taken the body size.
 const UI_PX = { compact: 13, normal: 14, spacious: 16 };
 
 // Button (and input-row) heights: three sizes 8px apart, and density moves the whole set by 8px, so
@@ -188,7 +188,7 @@ function computeNeutrals(secondary, background = null) {
 //   text (--accent-text) links, nav, labels on light surfaces: 4.5:1 (WCAG 1.4.3)
 // A light brand colour therefore keeps its fills but gets a darker shade for text and outlines.
 const DUO_TINT = 0.22; // fill strength of duotone pills and the destructive button (the regular tint is 0.12)
-// Duotone primary and secondary buttons (owner, 2026-10-21): part colour, part white, the page showing through
+// Duotone primary and secondary buttons: part colour, part white, the page showing through
 // the rest. The white keeps the colour clean on a tinted page (22% of an orange over a mint page went a muddy
 // beige); the colour share sets the hierarchy, so it holds on a white page too, where the white changes nothing.
 const DUO_FILLS = { primary: { colour: 0.12, white: 0.20 }, secondary: { colour: 0.07, white: 0.73 } };
@@ -217,8 +217,8 @@ function computeAccent(primary, n) {
   const tintAlpha = 0.12;
   const flat = [n.card, n.page, n.surface, n.hover];
   // The accent tints are OPAQUE, composited over white — not rgba() over whatever lies under them. A translucent teal over a
-  // lilac page mixed into a grey-blue (#eaebf4) that was neither the brand's hue nor the page's (owner, 2026-10-14); the
-  // same bug the status tints had on a cream page (2026-09-25). Over white the tint is clean on any page background.
+  // lilac page mixed into a grey-blue (#eaebf4) that was neither the brand's hue nor the page's; the
+  // same bug the status tints had on a cream page. Over white the tint is clean on any page background.
   const tint = composite(ui, tintAlpha, '#ffffff');
   const tintSubtle = composite(ui, tintAlpha / 2, '#ffffff');
   const duo = duoFill(ui, DUO_FILLS.primary);

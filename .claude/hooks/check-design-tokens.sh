@@ -1,8 +1,9 @@
 #!/bin/bash
 # Hook: PreToolUse (Edit|Write) — blocks hardcoded CSS values (colors, font-size,
 # font-weight, spacing, border-radius) in .svelte/.css files. Forces use of the
-# Design System tokens in src/app.css / src/lib/corporate.css instead.
-# Files that DEFINE the tokens are exempt (they legitimately contain literal values).
+# Design System tokens in src/app.css instead.
+# src/app.css DEFINES the tokens, so it is exempt. src/project.css may define the project's own (--name: value),
+# but not use a literal anywhere else.
 
 INPUT=$(cat)
 
@@ -28,8 +29,9 @@ if ! echo "$FILE_PATH" | grep -qE '\.(svelte|css)$'; then
   exit 0
 fi
 
-# Exempt the files that ARE the design system (they define the literal values)
-if echo "$FILE_PATH" | grep -qE 'src/app\.css$|src/lib/corporate\.css$|src/lib/theme\.ts$|src/lib/themes\.ts$|src/lib/brand-theme\.ts$'; then
+# Exempt the file that IS the design system (it defines the literal values). Either separator: Windows callers
+# report the path with backslashes.
+if echo "$FILE_PATH" | grep -qE 'src[/\\]app\.css$'; then
   exit 0
 fi
 
@@ -47,6 +49,13 @@ fi
 CONTENT=$(echo "$NEW_CONTENT_B64" | base64 -d 2>/dev/null)
 # Drop comment-only lines to reduce false positives
 CODE_LINES=$(echo "$CONTENT" | grep -vE '^\s*(//|/\*|\*)')
+
+# src/project.css holds what only this project has, on top of app.css: a colour for its charts or an illustration is
+# defined there as a token (--chart-warm: #f4a582;) and used through var(). The definitions are its tokens; every
+# other declaration is checked like any CSS.
+if echo "$FILE_PATH" | grep -qE 'src[/\\]project\.css$'; then
+  CODE_LINES=$(echo "$CODE_LINES" | sed -E 's/--[a-zA-Z0-9_-]+[[:space:]]*:[^;}]*;?//g')
+fi
 
 VIOLATIONS=""
 

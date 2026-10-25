@@ -8,5 +8,5 @@ Regenerates `backlog.html` at the project root from `memory/backlog.md` — sear
 
 ## Steps
 1. Run: `node .claude/scripts/pages/generate-backlog.js`
-2. If `memory/backlog.md` doesn't exist yet, create it first (see `/audit:memory` for the expected format: `##` sections, `- [ ]` / `- [x]` items, optional `[category]` tag per item, then an optional size `{S}` small · `{M}` medium · `{L}` large — an item without one simply shows no size; then an optional type `{bug}` · `{check}` (to verify) · `{decision}` (waiting on the owner) · `{idea}` · `{internal}` (how it's built), e.g. `- [ ] [frontend] {M} {bug} …`)
+2. If `memory/backlog.md` doesn't exist yet, create it first (the format is in `/project:bootstrap`, step 5: `##` sections, `- [ ]` / `- [x]` items, optional `[category]` tag per item, then an optional size `{S}` small · `{M}` medium · `{L}` large — an item without one simply shows no size; then an optional type `{bug}` · `{check}` (to verify) · `{decision}` (waiting on the owner) · `{idea}` · `{internal}` (how it's built), e.g. `- [ ] [frontend] {M} {bug} …`)
 3. Tell the user the file was regenerated and where it is

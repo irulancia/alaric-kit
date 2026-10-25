@@ -187,7 +187,7 @@
 .segmented {
   --seg-pad: calc(var(--space-1) / 2); --seg-n: 1; --seg-i: 0;
   position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; box-sizing: border-box;
-  padding: var(--seg-pad); background: var(--bg-hover); border-radius: var(--radius-control); /* one step darker than the surface: the track must read (owner) */
+  padding: var(--seg-pad); background: var(--bg-hover); border-radius: var(--radius-control); /* one step darker than the surface: the track must read */
 }
 .segmented.is-block { display: grid; width: 100%; }
 .segmented::before {

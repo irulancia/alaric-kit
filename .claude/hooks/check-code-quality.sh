@@ -1,5 +1,5 @@
 #!/bin/bash
-# Hook: Stop — before a task is considered done, scan modified .svelte/.ts files
+# Hook: Stop — before a task is considered done, scan modified .svelte/.ts/.js files
 # for console.log, TypeScript `any`, and hardcoded secrets. Blocks (decision:block)
 # if anything is found, so Claude has to fix it before finishing.
 
@@ -20,7 +20,9 @@ cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
 # -uall lists each file in a new folder: without it git reports only `src/`, and none of a new project's files
 # were checked (found 2026-10-21). `cut -c4-` keeps the path, `sed` keeps a renamed file's new name.
-FILES=$(git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -E '\.(svelte|ts)$')
+# .js too, not only .svelte/.ts (found 2026-10-25). Not in .claude/, tools/ or scripts/: those are command-line scripts,
+# where console.log is how they report what they did (the kit's own generators).
+FILES=$(git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -E '\.(svelte|ts|tsx|js|jsx|mjs|cjs)$' | grep -vE '^(\.claude|tools|scripts)/')
 
 if [ -z "$FILES" ]; then
   exit 0

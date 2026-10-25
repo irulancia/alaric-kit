@@ -7,12 +7,12 @@
 // (legal standard). 'apca' = APCA decides alone (reads better on mid-tones, draft standard).
 // customBg: false = the page is automatic, a near-white tinted with Secondary (the default); true = the page is exactly `background`.
 // Either way the greys (surfaces, borders, grey text) follow the page.
-// Defaults chosen by the owner, 2026-10-14 ("something more modern"): a vivid orange, a warm sand, a cream page, Poppins + Nunito,
+// The defaults, chosen to look modern: a vivid orange, a warm sand, a cream page, Poppins + Nunito,
 // the largest radius (buttons become pills; cards and fields keep their own caps) and duotone icons.
 const DEFAULTS = { primary: '#ec5106', secondary: '#e7e1d3', customBg: false, background: '#faf7f1', fontDisplay: 'Poppins', fontBody: 'Nunito', radius: 28, shadow: 'soft', density: 'normal', contrast: 'apca', iconStyle: 'duotone', styleControls: false };
 const state = { ...DEFAULTS };
 // The choices are remembered per project: the browser gives every page opened from the disk one shared storage, so one
-// key for all would open a new project with the last project's colours (owner, 2026-10-21). The project is the folder
+// key for all would open a new project with the last project's colours. The project is the folder
 // the configurator sits in.
 const STATE_KEY = 'ds-configurator-state:' + decodeURIComponent(location.pathname.replace(/\/\.claude\/scripts\/configurator\/configurator\.html$/, ''));
 
@@ -116,8 +116,8 @@ function applyTokens() {
 }
 
 // The page background field always shows the page's colour: computed from Secondary while "Automatic" is on (and not
-// editable then; a small "Auto" at the end of the row, owner: "just Automatic, on the same row"), the owner's own pick once it is off (owner, 2026-10-14: the page background should
-// recalculate whenever the secondary changes, with an Automatic box ticked by default that frees the choice once unticked).
+// editable then; a small "Auto" at the end of the row), the user's own pick once it is off: the page background
+// recalculates whenever the secondary changes, with an Automatic box ticked by default that frees the choice once unticked.
 function syncBackgroundField(page) {
   const auto = !state.customBg;
   const shown = auto ? page : state.background;

@@ -80,7 +80,7 @@ const ICONS = {
   'audit:memory': 'database',
 };
 const FALLBACK_ICON = 'article';
-// Where the clean kit lives (its own repo, not this workshop — owner, 2026-10-14): the dashboard's subtitle links to it.
+// Where the clean kit lives (its own repo, not this workshop): the dashboard's subtitle links to it.
 const KIT_REPO_URL = 'https://github.com/irulancia/alaric-kit';
 const iconFor = (key) => ICONS[key] || FALLBACK_ICON;
 

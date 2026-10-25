@@ -14,7 +14,7 @@ description: The pipeline from bootstrap to commit, and when a git push needs ex
 - **NEVER improvise design** — read the existing code line by line
 - When building dynamic/generic versions of existing features, copy exact patterns (props, columns, CSS classes, text)
 - Source of truth is the CODE, not the conversation plan
-- Check MEMORY.md for known gotchas before starting
+- Check Claude Code's memory (MEMORY.md, loaded by itself) for known gotchas before starting
 
 ### Step 1 — Plan
 - Break the feature into small, atomic tasks
@@ -47,9 +47,9 @@ description: The pipeline from bootstrap to commit, and when a git push needs ex
 - `--no-verify` / `--no-gpg-sign` are blocked mechanically by `settings.json` (`deny`) — not just a written rule
 
 ### Step 5 — Update Memory
-- After significant tasks: update MEMORY.md (automatic, don't ask)
+- After significant tasks: save what a later session needs in Claude Code's memory, and tick the backlog (automatic, don't ask)
 - Bug audit results → `memory/bugs-audit-{date}.md`
-- Use `/audit:memory` for thorough memory update
+- Use `/audit:memory` for a thorough update of both
 - **The owner's inbox** (`memory/inbox.md`, written from the Inbox page on the dashboard; the SessionStart hook
   says when notes wait): when asked, or when the hook says so, move each note into `memory/backlog.md` — rewritten
   in the project's format, the owner's words quoted, an area tag and a size — and delete it from the inbox (keep the header).

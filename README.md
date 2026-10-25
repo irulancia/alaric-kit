@@ -11,7 +11,7 @@ Alaric is part of [AMBIE Garden](https://ambiegarden.com), free tools for design
 3. **Pick your design system.** At the end of the setup, Claude asks whether you want to do it now. If you do, it opens the configurator: choose your colours, fonts, density and shape, save `app.css` in your project's `src` folder and tell Claude when it's done. If not, you can open the configurator from the dashboard anytime.
 4. **Use `dashboard.html` as your home base.** The backlog, the inbox, the rules, the commands and the configurator are all one click away, and until the project is fully set up, the **Start here** card shows what's done and what's next.
 
-Want to change the design later? Open the configurator again (from the dashboard) and save over `src/app.css`. Never edit that file by hand: every save rewrites it whole. What belongs only to your project goes beside it — a component keeps its styles inside itself, and classes shared across pages go in `src/project.css`, loaded right after `app.css`.
+Want to change the design later? Open the configurator again (from the dashboard) and save over `src/app.css`. Never edit that file by hand: every save rewrites it whole. What belongs only to your project goes beside it — a component keeps its styles inside itself, and classes shared across pages go in `src/project.css`, loaded right after `app.css` — along with any colour only your project uses (say, for its charts), defined there as a token of its own.
 
 ## The rules (`.claude/rules/`)
 
@@ -56,7 +56,7 @@ Run with `/project:<name>` or `/audit:<name>`. `dashboard.html` lists these live
 | `/project:backlog` | Regenerates `backlog.html` from `memory/backlog.md` |
 | `/project:history` | Regenerates `history.html`, a searchable page of the git history |
 | `/audit:bugs` | Comprehensive bug audit, categorized by severity |
-| `/audit:memory` | Reviews recent changes and updates the project's memory files |
+| `/audit:memory` | Reviews recent changes and updates the backlog in `memory/` and Claude Code's own memory |
 
 ## How the files are laid out and named
 

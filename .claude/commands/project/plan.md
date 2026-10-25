@@ -12,7 +12,7 @@ Create an implementation plan BEFORE writing any code.
 3. Identify ALL files that will change
 4. Break the work into ordered, atomic tasks (S/M/L complexity)
 5. Identify risks, unknowns, and dependencies
-6. Check MEMORY.md and CLAUDE.md for relevant gotchas
+6. Check CLAUDE.md and Claude Code's memory (MEMORY.md, loaded by itself) for relevant gotchas
 
 ## Output Format
 ```

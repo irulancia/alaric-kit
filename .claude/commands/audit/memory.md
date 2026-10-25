@@ -1,41 +1,26 @@
 ---
-description: Review recent changes and update the project's committed MEMORY.md and related memory files.
+description: Review recent changes and bring the project's memory up to date — the backlog in memory/ and Claude Code's own memory.
 ---
 
 # /audit:memory — Memory Update
 
-Review recent changes and update MEMORY.md and related memory files.
+Review recent changes and update what the project remembers. There are two places, and only two:
+- **`memory/`** in the project — `backlog.md` (what's open and what's done), `inbox.md` (the owner's notes, waiting to be moved), `bugs-audit-{date}.md` (from `/audit:bugs`). In git, the project's own record.
+- **Claude Code's memory** — the per-machine memory Claude Code keeps by itself (its `MEMORY.md` index, loaded in every session): who the user is, how they want to work, lessons and gotchas. Not in git, not shared.
+
+The kit keeps no third, committed `MEMORY.md`.
 
 ## Steps
 1. Run `git log --oneline -20` to see recent commits
 2. Run `git diff HEAD~5` (or appropriate range) to see recent changes
-3. Review current MEMORY.md content
-4. Update sections:
-   - **Bug audit summaries** — add new audit results, remove fixed items
-   - **Architecture changes** — new files, changed patterns, new page types
-   - **Known tech debt** — update status of items
-   - **NEXT SESSION** — update current focus and priorities
-5. Check for outdated information:
-   - References to deleted files or removed features
-   - Bug statuses that have changed
-   - Patterns that no longer apply
-6. Keep MEMORY.md under 200 lines (content after line 200 is truncated)
-7. Move detailed info to dedicated files (backlog.md, bugs-audit.md, etc.)
-
-## Memory Files
-| File | Purpose |
-|------|---------|
-| `MEMORY.md` | Main memory — workflow rules, session notes, summaries |
-| `backlog.md` | Feature backlog with phases |
-| `bugs-audit.md` | Bug audit #1 details |
-| `bugs-audit-2.md` | Bug audit #2 details |
+3. `memory/backlog.md`:
+   - tick what the commits finished (`- [x]`, with the date), and add what they left open or found
+   - check the open items: references to deleted files or removed features, bugs already fixed, decisions already taken
+4. `memory/inbox.md`: move any waiting note into the backlog (`workflow.md`, Step 5) and delete it from the inbox, keeping the header
+5. Claude Code's memory: save what a future session needs and can't read from the code or `CLAUDE.md` — a preference the user stated, a gotcha that cost time; correct or delete a memory that is no longer true
+6. Say in a few lines what changed
 
 ## Rules
-- Keep MEMORY.md concise — summaries and links, not full details
-- Stable project info (stack, architecture) belongs in CLAUDE.md, not MEMORY.md
-- Don't duplicate what's in CLAUDE.md
-- Always preserve workflow rules section
-- Update "NEXT SESSION" with current priorities
-
-## Note
-This is a project-committed, git-shared memory file — distinct from Claude Code's built-in per-machine auto memory (`~/.claude/projects/.../memory/`), which is personal and not version-controlled. Use this command when the team needs shared, in-repo project memory; the built-in auto memory handles personal preferences automatically without needing this command.
+- Stable project info (stack, architecture, commands) belongs in `CLAUDE.md`, not in memory
+- Don't duplicate what's in `CLAUDE.md`, the code or the git history
+- The backlog's format is the one in `/project:bootstrap` (step 5)
