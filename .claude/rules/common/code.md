@@ -32,7 +32,7 @@ Exception: `$state` runes in Svelte 5 are designed for direct mutation.
 - User-facing: friendly messages, in the project's UI languages
 
 ## UI Languages
-- The languages are in `CLAUDE.md` ("UI languages"): the user's own, plus English when theirs isn't English (`/project:bootstrap`)
+- The languages are in `CLAUDE.md` ("UI languages"), chosen at `/project:bootstrap` — never taken from the language the user talks in
 - One language: plain strings are fine. Two or more: every user-facing string — labels, buttons, errors, empty states, page titles — goes through the translation files from the first page, never written into a component; a string added in one language is added in all of them
 - The visitor's browser language picks among them; English when it asks for none of them
 
