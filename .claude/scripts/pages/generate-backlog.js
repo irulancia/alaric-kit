@@ -69,3 +69,5 @@ const html = template
   .replace('/*__ITEMS_JSON__*/', JSON.stringify(items));
 fs.writeFileSync(outputPath, html, 'utf8');
 console.log(`Wrote ${items.length} backlog items to ${outputPath}`);
+// The dashboard links this page only once it exists, so it is regenerated with it.
+require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'generate-dashboard.js')], { stdio: 'inherit' });

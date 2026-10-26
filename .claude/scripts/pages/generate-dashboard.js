@@ -145,7 +145,7 @@ function getStartSteps() {
   const steps = [
     { title: 'Set up the project', todo: 'Run /project:bootstrap in Claude Code.', done: fileExists('CLAUDE.md') },
     { title: 'Pick the design system', todo: 'Open Design System below, press Save src/app.css and save it in the src folder of this project, then tell Claude "done".', done: readIfExists(APP_CSS).includes(CONFIGURATOR_MARK) },
-    { title: 'Connect it to the app', todo: 'Claude adds class="ds-root" to <body> and imports app.css once — ask it to, if it hasn\'t.', done: BODY_FILES.some((f) => readIfExists(f).includes('ds-root')) },
+    { title: 'Connect it to the app', todo: 'Claude adds class="ds-root" to <body> and links app.css once — ask it to, if it hasn\'t.', done: BODY_FILES.some((f) => readIfExists(f).includes('ds-root')) },
     { title: 'First commit', todo: 'Ask Claude to commit (/project:commit).', done: hasCommit() },
   ];
   if (steps.every((s) => s.done)) return [];

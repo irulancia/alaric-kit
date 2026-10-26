@@ -27,17 +27,29 @@ git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -q
 # A fresh checkout has no .svelte-kit types yet: without them every route reports false errors.
 [ -x node_modules/.bin/svelte-kit ] && npx svelte-kit sync >/dev/null 2>&1
 
-OUTPUT=$(npx svelte-check --threshold error 2>&1)
+OUTPUT=$(node_modules/.bin/svelte-check --threshold error 2>&1)
 [ $? -eq 0 ] && exit 0
 
-REASON="svelte-check found errors before this task can be considered done:
+# A failed run is not always errors in the code: svelte-check can crash (out of memory, a broken install). Only its
+# own summary ("svelte-check found 2 errors and 0 warnings") means the code has errors; anything else is said as a
+# check that couldn't run, and doesn't block — there is nothing in the code to fix.
+if echo "$OUTPUT" | grep -qE 'found [0-9]+ errors?'; then
+  REASON="svelte-check found errors before this task can be considered done:
 $(echo "$OUTPUT" | tail -40)
 
 Fix them before finishing."
+  KEY=reason
+  DECISION=block
+else
+  REASON="svelte-check could not run, so the types were not checked (this is not an error in the code):
+$(echo "$OUTPUT" | tail -15)"
+  KEY=systemMessage
+  DECISION=
+fi
 
 node -e "
-  const reason = process.argv[1];
-  console.log(JSON.stringify({ decision: 'block', reason }));
-" "$REASON"
+  const [key, text, decision] = process.argv.slice(1);
+  console.log(JSON.stringify(decision ? { decision, [key]: text } : { [key]: text }));
+" "$KEY" "$REASON" "$DECISION"
 
 exit 0

@@ -33,6 +33,7 @@ A few more hooks back the rules above without a rules file of their own:
 - `remind-rules.sh` — resurfaces the most-missed rules on every message
 - `check-types.sh` — once, at the end of a task that changed Svelte/TS files: runs `svelte-check` and blocks finishing while it reports errors, so Claude sees them and fixes them (only once per stop, so an error it can't fix never loops)
 - `regenerate-components.sh` — after `configurator/styles/components.css` is edited, regenerates `configurator/components.generated.js` (what "Save app.css" reads, so it works with the configurator opened as a file)
+- `regenerate-pages.sh` — keeps the generated pages current: `history.html` after every commit (and merge, pull, rebase), `backlog.html` after an edit of `memory/backlog.md`, and the dashboard with each, so its cards link the pages as soon as they exist
 
 ## Skills (`.claude/skills/`)
 

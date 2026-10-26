@@ -6,6 +6,9 @@
   const FONT_WEIGHTS = '400;500;600;700';
   const STATUS_CLEAR_MS = 4000;
   const COPIED_LABEL_MS = 1500;
+  const CHOICES_CLASS = 'ds-saved-choices';
+  const CHOICES_PROP = '--ds-choices';
+  const PROJECT_APP_CSS = '../../../src/app.css';
 
   // The stylesheet requests for the chosen heading and body fonts. Also used for the live preview. Google Fonts takes
   // every family in one request; Fontshare gets ONE request per family — given two, its API returns only one of them
@@ -43,6 +46,31 @@
    Usage: put class="ds-root" on <body>; element typography is scoped to it. */
 ${controlsNote()}`;
 
+  // The choices, in the file itself, so the configurator opens with them in any browser (no element in a project has
+  // this class: the rule does nothing there).
+  const choicesRule = () => `/* The choices this file was saved with, read back by the configurator when it opens. */
+.${CHOICES_CLASS} { ${CHOICES_PROP}: '${JSON.stringify(state)}'; }`;
+
+  // The project's app.css: src/ beside .claude/, three folders up. A page opened as a file can't fetch() it, but it can
+  // load it as a stylesheet — in a hidden frame, so its rules never touch this page — and read the choices from the
+  // custom property above. found: there is an app.css; choices: null when it is older than that rule.
+  window.dsReadProjectChoices = () => new Promise((resolve) => {
+    const frame = document.createElement('iframe');
+    frame.hidden = true;
+    frame.srcdoc = `<link rel="stylesheet" href="${new URL(PROJECT_APP_CSS, location.href).href}"><span class="${CHOICES_CLASS}"></span>`;
+    frame.addEventListener('load', () => {
+      const doc = frame.contentDocument;
+      const read = (el, prop) => doc.defaultView.getComputedStyle(el).getPropertyValue(prop).trim();
+      const found = read(doc.documentElement, '--accent') !== '';
+      const raw = read(doc.querySelector('span'), CHOICES_PROP);
+      frame.remove();
+      let choices = null;
+      try { choices = raw ? JSON.parse(raw.slice(1, -1)) : null; } catch (e) { choices = null; }   // unreadable: treated as an older file
+      resolve({ found, choices });
+    });
+    document.body.append(frame);
+  });
+
   // The component styles come from configurator/components.generated.js (generated from the .css), loaded as a
   // script: a page opened as a file (file://) can't fetch() the .css next to it, but it can load a script.
   const readComponentsCss = () => {
@@ -72,7 +100,7 @@ ${names.map((n) => `.icon-${n} { --icon: ${svgUrl(window.DS_ICONS[n][state.iconS
     const components = readComponentsCss();
     // @import must come before any rule, so it follows only the header comment.
     const imports = window.dsFontsUrls().map((u) => `@import url('${u}');\n`).join('');
-    return `${header()}${imports}\n${tokenBlock()}\n\n${components.trim()}\n\n${iconsCss()}\n`;
+    return `${header()}${imports}\n${tokenBlock()}\n\n${choicesRule()}\n\n${components.trim()}\n\n${iconsCss()}\n`;
   };
 
   const download = (css) => {
@@ -130,6 +158,7 @@ ${names.map((n) => `.icon-${n} { --icon: ${svgUrl(window.DS_ICONS[n][state.iconS
     try {
       const { result, bytes } = await window.dsSaveAppCss();
       if (result === 'cancelled') return;
+      if (result === 'saved') markSaved();   // what Reset goes back to now (ui.js)
       flash(btn, result === 'saved' ? 'Saved!' : 'Downloaded!');
       setStatus(result === 'saved'
         ? `Saved app.css (${kb(bytes)}).`

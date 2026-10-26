@@ -107,6 +107,21 @@
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-components.sh\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-pages.sh\"",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/regenerate-pages.sh\"",
+            "timeout": 15
           }
         ]
       }

@@ -190,48 +190,84 @@ function syncInputs() {
   document.getElementById('font-body').value = state.fontBody;
 }
 
-// Reset to defaults: off while the choices already are the defaults; after a reset, Undo brings the previous choices back
-// for a while — no confirm dialog to click through, and nothing lost to one wrong click.
+// Reset goes back to the project's saved app.css once there is one (the defaults mean nothing to a project by then),
+// to the defaults before that. Off while the choices already are those; after a reset, Undo brings the previous choices
+// back for a while — no confirm dialog to click through, and nothing lost to one wrong click.
 const UNDO_MS = 10000;
-const isDefault = () => Object.keys(DEFAULTS).every((k) => state[k] === DEFAULTS[k]);
-function syncResetButton() { document.getElementById('reset-btn').disabled = isDefault(); }
+let savedChoices = null;   // what the project's src/app.css holds: read when the page opens, updated by a save
+const sameChoices = (a, b) => Object.keys(DEFAULTS).every((k) => a[k] === b[k]);
+function syncResetButton() {
+  const btn = document.getElementById('reset-btn');
+  btn.textContent = savedChoices ? 'Back to saved app.css' : 'Reset to defaults';
+  btn.disabled = sameChoices(state, savedChoices || DEFAULTS);
+}
+function markSaved() { savedChoices = { ...state }; syncResetButton(); }
 function setChoices(choices) { Object.assign(state, choices); syncInputs(); applyTokens(); }
-function offerUndo(previous) {
+function offerUndo(previous, message) {
   const host = document.getElementById('reset-status');
   const undo = document.createElement('button');
   undo.type = 'button';
   undo.className = 'cfg-link-btn';
   undo.textContent = 'Undo';
   undo.addEventListener('click', () => { setChoices(previous); host.replaceChildren('Your choices are back.'); setTimeout(() => host.replaceChildren(), UNDO_MS / 3); });
-  host.replaceChildren('Back to the defaults.', undo);
+  host.replaceChildren(message, undo);
   clearTimeout(offerUndo.timer);
   offerUndo.timer = setTimeout(() => host.replaceChildren(), UNDO_MS);
 }
 document.getElementById('reset-btn').addEventListener('click', () => {
   const previous = { ...state };
-  setChoices(DEFAULTS);
-  offerUndo(previous);
+  setChoices(savedChoices || DEFAULTS);
+  offerUndo(previous, savedChoices ? 'Back to the saved app.css.' : 'Back to the defaults.');
 });
 
-// Only accept values the current version understands, so an older saved state can't break the page.
+// Only accept values the current version understands, so an older saved state (or an older app.css) can't break the page.
+function validChoices(saved) {
+  const hex = /^#[0-9a-fA-F]{6}$/;
+  const valid = {};
+  if (hex.test(saved.primary)) valid.primary = saved.primary;
+  if (hex.test(saved.secondary)) valid.secondary = saved.secondary;
+  if (typeof saved.customBg === 'boolean') valid.customBg = saved.customBg;
+  if (hex.test(saved.background)) valid.background = saved.background;
+  if (fontNames(DISPLAY_FONTS).includes(saved.fontDisplay)) valid.fontDisplay = saved.fontDisplay;
+  if (fontNames(BODY_FONTS).includes(saved.fontBody)) valid.fontBody = saved.fontBody;
+  if (Number.isInteger(saved.radius) && saved.radius >= 0 && saved.radius <= 28) valid.radius = saved.radius;
+  if (SHADOW_NAMES.includes(saved.shadow)) valid.shadow = saved.shadow;
+  if (TYPE_RATIOS[saved.density]) valid.density = saved.density;
+  if (['wcag', 'apca'].includes(saved.contrast)) valid.contrast = saved.contrast;
+  if (['outline', 'filled', 'duotone'].includes(saved.iconStyle)) valid.iconStyle = saved.iconStyle;
+  if (typeof saved.styleControls === 'boolean') valid.styleControls = saved.styleControls;
+  return valid;
+}
+// Returns whether this browser had choices of its own for the project.
 function loadSaved() {
   try {
     const saved = JSON.parse(localStorage.getItem(STATE_KEY));
-    if (!saved) return;
-    const hex = /^#[0-9a-fA-F]{6}$/;
-    if (hex.test(saved.primary)) state.primary = saved.primary;
-    if (hex.test(saved.secondary)) state.secondary = saved.secondary;
-    if (typeof saved.customBg === 'boolean') state.customBg = saved.customBg;
-    if (hex.test(saved.background)) state.background = saved.background;
-    if (fontNames(DISPLAY_FONTS).includes(saved.fontDisplay)) state.fontDisplay = saved.fontDisplay;
-    if (fontNames(BODY_FONTS).includes(saved.fontBody)) state.fontBody = saved.fontBody;
-    if (Number.isInteger(saved.radius) && saved.radius >= 0 && saved.radius <= 28) state.radius = saved.radius;
-    if (SHADOW_NAMES.includes(saved.shadow)) state.shadow = saved.shadow;
-    if (TYPE_RATIOS[saved.density]) state.density = saved.density;
-    if (['wcag', 'apca'].includes(saved.contrast)) state.contrast = saved.contrast;
-    if (['outline', 'filled', 'duotone'].includes(saved.iconStyle)) state.iconStyle = saved.iconStyle;
-    if (typeof saved.styleControls === 'boolean') state.styleControls = saved.styleControls;
-  } catch (e) {}
+    Object.assign(state, validChoices(saved || {}));
+    return Boolean(saved);
+  } catch (e) {
+    return false;
+  }
+}
+
+// The configurator opens with what the project's app.css holds (export.js reads it): that is what the project uses, in
+// any browser. This browser's own memory only matters for changes not saved yet — offered back, in one click.
+function openProjectFile({ found, choices }, hadOwnChoices) {
+  const host = document.getElementById('reset-status');
+  if (!found) return;
+  if (!choices) {
+    host.replaceChildren("This project's app.css comes from an older configurator. Save it once and its choices open here next time.");
+    return;
+  }
+  const unsaved = { ...state };
+  savedChoices = { ...DEFAULTS, ...validChoices(choices) };
+  setChoices(savedChoices);
+  if (!hadOwnChoices || sameChoices(unsaved, savedChoices)) return;
+  const use = document.createElement('button');
+  use.type = 'button';
+  use.className = 'cfg-link-btn';
+  use.textContent = 'Use them';
+  use.addEventListener('click', () => { setChoices(unsaved); host.replaceChildren(); });
+  host.replaceChildren('Opened the saved app.css. You had changes here that weren\'t saved.', use);
 }
 
 function fillFontSelect(id, groups) {
@@ -304,10 +340,11 @@ document.querySelectorAll('.cfg-tab').forEach((t) => t.addEventListener('click',
 let savedView = 'page';
 try { savedView = localStorage.getItem('ds-configurator-view') === 'components' ? 'components' : 'page'; } catch (e) {}
 if (location.hash.startsWith('#sec-')) savedView = 'components'; // a shared link to one group opens the reference
-loadSaved();
+const hadOwnChoices = loadSaved();
 syncInputs();
 applyTokens();
 setView(savedView);
+window.dsReadProjectChoices().then((file) => openProjectFile(file, hadOwnChoices));
 if (location.hash.startsWith('#sec-')) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 
 // Segmented controls in the preview answer a click (the component is CSS only: the app sets aria-pressed), so

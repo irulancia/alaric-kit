@@ -5,7 +5,7 @@
 //
 // Usage: node .claude/scripts/pages/generate-history.js [output-path]
 
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { getProjectName } = require('./project-name.js');
@@ -84,3 +84,5 @@ function build() {
 }
 
 build();
+// The dashboard links this page only once it exists, so it is regenerated with it.
+execFileSync(process.execPath, [path.join(__dirname, 'generate-dashboard.js')], { stdio: 'inherit' });
