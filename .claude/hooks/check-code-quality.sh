@@ -19,8 +19,8 @@ ACTIVE=$(echo "$INPUT" | node -e "
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 
 # -uall lists each file in a new folder: without it git reports only `src/`, and none of a new project's files
-# were checked (found 2026-10-21). `cut -c4-` keeps the path, `sed` keeps a renamed file's new name.
-# .js too, not only .svelte/.ts (found 2026-10-25). Not in .claude/, tools/ or scripts/: those are command-line scripts,
+# were checked. `cut -c4-` keeps the path, `sed` keeps a renamed file's new name.
+# .js too, not only .svelte/.ts. Not in .claude/, tools/ or scripts/: those are command-line scripts,
 # where console.log is how they report what they did (the kit's own generators).
 FILES=$(git status --porcelain -uall 2>/dev/null | cut -c4- | sed 's/.* -> //' | grep -E '\.(svelte|ts|tsx|js|jsx|mjs|cjs)$' | grep -vE '^(\.claude|tools|scripts)/')
 

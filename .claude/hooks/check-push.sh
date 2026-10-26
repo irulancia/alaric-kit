@@ -1,7 +1,7 @@
 #!/bin/bash
 # Hook: PreToolUse (Bash) — every `git push` asks the owner first. The "ask" rule in
-# settings.json alone is not enough: in auto mode a push went through with no prompt
-# (2026-10-19). A hook runs in every mode. See rules/common/workflow.md, "PUSH".
+# settings.json alone is not enough: in auto mode a push went through with no prompt.
+# A hook runs in every mode. See rules/common/workflow.md, "PUSH".
 
 INPUT=$(cat)
 

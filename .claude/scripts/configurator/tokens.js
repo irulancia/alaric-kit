@@ -4,8 +4,8 @@
 // Two lists, because the two jobs differ. Headings: half neutral, half with real character
 // (all widely used, all available in the 400-700 weights the system asks for). Body: legibility
 // first (large x-height, open letterforms), plus two serifs for an editorial feel.
-// Fontshare (Indian Type Foundry, free for commercial use) adds modern grotesques Google Fonts doesn't have —
-// added 2026-10-04. All three have 400-700.
+// Fontshare (Indian Type Foundry, free for commercial use) adds modern grotesques Google Fonts doesn't have.
+// All three have 400-700.
 const FONTSHARE_FONTS = ['Switzer', 'Satoshi', 'General Sans'];
 const DISPLAY_FONTS = {
   Neutral: ['Inter', 'Poppins', 'Montserrat', 'Manrope', 'Quicksand'],
@@ -158,7 +158,7 @@ function computeNeutrals(secondary, background = null) {
   const tone = (s, l) => hslToHex(hue, s * strength, l);
   // A step down from the page keeps the page's COLOURFULNESS (HSL chroma = (1 - |2L - 1|) x S), not its saturation figure.
   // Near white, a high S is almost invisible (#f8f1fa is S 47% but barely lilac); holding S while lowering L made the
-  // surfaces and borders two to three times more colourful than the page — an intense mauve nobody chose (2026-10-14).
+  // surfaces and borders two to three times more colourful than the page — an intense mauve nobody chose.
   const chroma = (100 - Math.abs(2 * hsl.l - 100)) * hsl.s;
   const step = (dl) => {
     const l = Math.max(0, hsl.l - dl);

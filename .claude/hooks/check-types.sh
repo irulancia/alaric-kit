@@ -2,7 +2,7 @@
 # Hook: Stop — before a task is considered done, run svelte-check once if .svelte/.ts files changed, and block
 # (decision:block) with its errors, so Claude sees them and fixes them before finishing.
 # It used to run after every edit as a PostToolUse hook, whose output Claude never saw: it cost time on every edit
-# (19 per session in the kit's evaluation) and helped nothing (2026-10-19).
+# (19 per session in the kit's evaluation) and helped nothing.
 
 INPUT=$(cat)
 

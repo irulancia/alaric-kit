@@ -136,7 +136,7 @@ function fillAdvice(fill, name) {
 // darker under white text, lighter under dark text. At the lightness limit it
 // goes the other way, and it backs off if 4.5:1 would be lost.
 // It must also stay a BUTTON: a light fill lightened by the full step reached the card's own colour and the button
-// vanished on hover (found 2026-10-04: a beige secondary went to #fdfcfb on a #fcfbf8 card). The hover keeps
+// vanished on hover (a beige secondary went to #fdfcfb on a #fcfbf8 card). The hover keeps
 // at least HOVER_SURFACE_MIN against the surfaces a button sits on (the card, the page) — the step shrinks until it does.
 const HOVER_SURFACE_MIN = 1.06;
 function hoverColor(fill, on, surfaces = []) {

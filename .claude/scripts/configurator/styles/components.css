@@ -214,7 +214,7 @@
   transition: color 0.2s ease;
 }
 .segmented > button:is(:hover, .is-hover) { color: var(--text-primary); }
-/* only the chosen option is medium: weight is part of what tells it apart (all-medium read flat, 2026-10-04) */
+/* only the chosen option is medium: weight is part of what tells it apart (all-medium read flat) */
 .segmented > button[aria-pressed="true"] { color: var(--text-primary); font-weight: var(--weight-medium); }
 .segmented > button:is(:focus-visible, .is-focus) { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
 .segmented > button:is(:disabled, .is-disabled) { color: var(--disabled-text); cursor: not-allowed; }
@@ -269,7 +269,7 @@
 .field-msg { display: flex; align-items: center; gap: var(--space-1); padding: 0 var(--space-3); font-size: var(--text-small); color: var(--text-secondary); }
 .field-group.has-error .field-msg { color: var(--error-strong); }
 .field-group.has-success .field-msg { color: var(--success-strong); }
-/* labels recede: regular weight, smaller and secondary — a medium label competed with the control under it (2026-10-04) */
+/* labels recede: regular weight, smaller and secondary — a medium label competed with the control under it */
 .label { font-size: var(--text-small); font-weight: var(--weight-regular); color: var(--text-secondary); }
 
 .input-group { display: flex; align-items: stretch; }
@@ -299,7 +299,7 @@
   border: solid var(--on-accent); border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 .radio input:checked { box-shadow: inset 0 0 0 3px var(--bg-card); }
-/* Switch (amended 2026-10-04): its size follows density (the icon size: 18 / 20 / 24px tall), and OFF is an
+/* Switch: its size follows density (the icon size: 18 / 20 / 24px tall), and OFF is an
    outlined track (--border-control, 3:1 — WCAG 1.4.11) with a grey thumb: the old light fill + white thumb sat at
    1.3:1 and the off state didn't read. ON: the accent's UI shade with a card-coloured thumb. */
 .switch input { --sw-h: var(--icon-md); box-sizing: border-box; width: calc(var(--sw-h) * 1.8); height: var(--sw-h);

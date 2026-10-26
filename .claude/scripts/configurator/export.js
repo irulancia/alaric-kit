@@ -12,7 +12,7 @@
 
   // The stylesheet requests for the chosen heading and body fonts. Also used for the live preview. Google Fonts takes
   // every family in one request; Fontshare gets ONE request per family — given two, its API returns only one of them
-  // (found 2026-10-04: general-sans + switzer → General Sans alone).
+  // (general-sans + switzer → General Sans alone).
   window.dsFontsUrls = () => {
     const chosen = [...new Set([state.fontDisplay, state.fontBody])];
     const google = chosen.filter((f) => !FONTSHARE_FONTS.includes(f));
@@ -53,10 +53,13 @@ ${controlsNote()}`;
 
   // The project's app.css: src/ beside .claude/, three folders up. A page opened as a file can't fetch() it, but it can
   // load it as a stylesheet — in a hidden frame, so its rules never touch this page — and read the choices from the
-  // custom property above. found: there is an app.css; choices: null when it is older than that rule.
+  // custom property above. found: there is an app.css; choices: null when it is older than that rule. The frame is
+  // invisible but not display:none — Firefox computes no styles at all inside a display:none frame.
   window.dsReadProjectChoices = () => new Promise((resolve) => {
     const frame = document.createElement('iframe');
-    frame.hidden = true;
+    frame.style.cssText = 'position: absolute; width: 0; height: 0; border: 0; visibility: hidden;';
+    frame.setAttribute('aria-hidden', 'true');
+    frame.tabIndex = -1;
     frame.srcdoc = `<link rel="stylesheet" href="${new URL(PROJECT_APP_CSS, location.href).href}"><span class="${CHOICES_CLASS}"></span>`;
     frame.addEventListener('load', () => {
       const doc = frame.contentDocument;
@@ -83,7 +86,7 @@ ${controlsNote()}`;
   // The icon set, in the chosen style, as CSS masks: <span class="icon icon-house" aria-hidden="true"></span>. The
   // icon is painted in currentColor, the duotone's tone at its own 20% (a mask reads the SVG's alpha). One file and
   // no framework needed — without it a project had no way to the icons and went digging through the configurator's
-  // scripts for them (found 2026-10-15 by the kit's A/B evaluation). Inline <svg class="icon"> still works.
+  // scripts for them (found by the kit's A/B evaluation). Inline <svg class="icon"> still works.
   const svgUrl = (paths) => `url("data:image/svg+xml,${`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'>${paths.replace(/"/g, "'")}</svg>`
     .replace(/%/g, '%25').replace(/#/g, '%23').replace(/</g, '%3C').replace(/>/g, '%3E')}")`;
   const iconsCss = () => {

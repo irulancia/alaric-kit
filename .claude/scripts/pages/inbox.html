@@ -76,7 +76,7 @@ const HEADER = '# Inbox\n\nNotes for Claude, in any language. Claude moves them 
 const NOT_OPEN = 'Open the inbox (the button above) to see what is waiting.';
 // The remembered file is keyed by this page's own project folder. Chrome gives every file:// page
 // the same origin, so with one shared key an pages/inbox.html from one project reused the file chosen
-// last in another (a note written in one project landed in another's inbox, 2026-10-09).
+// last in another (a note written in one project landed in another's inbox).
 const PAGE_SUFFIX = /\/\.claude\/scripts\/pages\/inbox\.html$/;
 const WINDOWS_DRIVE = /^\/([A-Za-z]:)/;   // file:///C:/… has a slash before the drive letter
 const PROJECT_DIR = decodeURIComponent(location.pathname).replace(PAGE_SUFFIX, '').replace(WINDOWS_DRIVE, '$1');

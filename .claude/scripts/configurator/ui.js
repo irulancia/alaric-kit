@@ -172,7 +172,7 @@ function pageThirdHue() {
 }
 
 // Outline buttons have no fill: primary and secondary differ only by their text-safe shades. When those come out
-// alike (a secondary in the primary's hue family, 2026-10-21), nothing else can tell the two apart — the panel says
+// alike (a secondary in the primary's hue family), nothing else can tell the two apart — the panel says
 // so rather than changing the chosen colours. Duotone separates them by how much colour they hold.
 const OUTLINE_PAIR_MIN_DE = 15;
 function outlinePairAlike(tokens) {
